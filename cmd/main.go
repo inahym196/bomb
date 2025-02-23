@@ -7,7 +7,11 @@ import (
 )
 
 func main() {
-	opt := &bomb.GameOption{BoardWidth: 8}
+
+	opt := &bomb.GameOption{
+		BoardWidth: 8,
+		Bombs:      []bomb.Position{{Row: 0, Col: 0}, {Row: 1, Col: 2}},
+	}
 	game := bomb.NewGame(opt)
 	fmt.Printf("%v", game.GetBoard())
 }
