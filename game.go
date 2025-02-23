@@ -6,15 +6,16 @@ type Game struct {
 
 type GameOption struct {
 	BoardWidth int
+	Bombs      []Position
 }
 
 func NewGame(opt *GameOption) *Game {
 	if opt == nil {
 		opt = &GameOption{}
 	}
-	return &Game{
-		board: NewBoard(opt.BoardWidth),
-	}
+	game := &Game{NewBoard(opt.BoardWidth)}
+	game.board.SetBombs(opt.Bombs)
+	return game
 }
 
 func (g *Game) GetBoard() *Board {

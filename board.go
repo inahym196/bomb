@@ -24,11 +24,11 @@ type Board struct {
 
 func NewBoard(width int) *Board {
 	board := &Board{}
-	board.init(width)
+	board.cells = initCells(width)
 	return board
 }
 
-func (b *Board) init(width int) {
+func initCells(width int) [][]Cell {
 	cells := make([][]Cell, width)
 	for i, row := range cells {
 		cells[i] = make([]Cell, width)
@@ -36,5 +36,16 @@ func (b *Board) init(width int) {
 			cells[i][j] = NewCell(CellClosed)
 		}
 	}
-	b.cells = cells
+	return cells
+}
+
+type Position struct {
+	Row int
+	Col int
+}
+
+func (b *Board) SetBombs(positionList []Position) {
+	for _, pos := range positionList {
+		b.cells[pos.Row][pos.Col] = NewCell(CellBomb)
+	}
 }
