@@ -63,15 +63,16 @@ func (c *CLIController) Run() {
 		switch input.Text() {
 		case "show", "s":
 			fmt.Print(c.getBoard())
-		case "exit", "quit":
+		case "exit", "quit", "q":
+			fmt.Println("Exiting...")
 			return
 		case "help", "h":
 			fmt.Print(heredoc.Doc(`
-			Usage:
-			  > help              this message
-			  > show              show board
-			  > open <row> <col>  open cell
-			  > exit              end game
+			Available Commands:
+			  > show              Show board
+			  > open <row> <col>  Open cell
+			  > help              Show this help message
+			  > exit              Exit the program
 			`))
 		default:
 			fmt.Printf("\"%s\" is invalid command. Use \"help\"\n", input.Text())
