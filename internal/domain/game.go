@@ -1,4 +1,4 @@
-package bomb
+package domain
 
 type Game struct {
 	board *Board

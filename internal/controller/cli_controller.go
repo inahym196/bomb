@@ -6,14 +6,14 @@ import (
 	"os"
 
 	"github.com/MakeNowJust/heredoc"
-	"github.com/inahym196/bomb"
+	"github.com/inahym196/bomb/internal/domain"
 )
 
 type CLIController struct {
-	game *bomb.Game
+	game *domain.Game
 }
 
-func NewCLIController(game *bomb.Game) *CLIController {
+func NewCLIController(game *domain.Game) *CLIController {
 	return &CLIController{game}
 }
 
@@ -30,7 +30,7 @@ func (c *CLIController) getBoard() string {
 	return output
 }
 
-func cellsToStr(cells [][]bomb.Cell) [][]string {
+func cellsToStr(cells [][]domain.Cell) [][]string {
 	dto := make([][]string, len(cells))
 	for i, row := range cells {
 		dto[i] = make([]string, len(cells))
@@ -41,13 +41,13 @@ func cellsToStr(cells [][]bomb.Cell) [][]string {
 	return dto
 }
 
-func cellToStr(cell bomb.Cell) string {
+func cellToStr(cell domain.Cell) string {
 	switch cell.GetState() {
-	case bomb.CellBomb:
+	case domain.CellBomb:
 		return "B"
-	case bomb.CellOpen:
+	case domain.CellOpen:
 		return " "
-	case bomb.CellClosed:
+	case domain.CellClosed:
 		return "?"
 	default:
 		return ""
