@@ -1,4 +1,4 @@
-package bomb
+package domain
 
 const (
 	CellUndefined byte = iota
