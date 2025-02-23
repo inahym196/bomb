@@ -18,6 +18,10 @@ func NewCell(state byte) Cell {
 	return Cell{state}
 }
 
+func (c Cell) GetState() byte {
+	return c.state
+}
+
 type Board struct {
 	cells [][]Cell
 }
@@ -30,9 +34,9 @@ func NewBoard(width int) *Board {
 
 func initCells(width int) [][]Cell {
 	cells := make([][]Cell, width)
-	for i, row := range cells {
+	for i := range width {
 		cells[i] = make([]Cell, width)
-		for j := range row {
+		for j := range width {
 			cells[i][j] = NewCell(CellClosed)
 		}
 	}
@@ -48,4 +52,8 @@ func (b *Board) SetBombs(positionList []Position) {
 	for _, pos := range positionList {
 		b.cells[pos.Row][pos.Col] = NewCell(CellBomb)
 	}
+}
+
+func (b *Board) GetCells() [][]Cell {
+	return b.cells
 }
