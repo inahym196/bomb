@@ -38,3 +38,11 @@ func CellStateFrom(cell domain.Cell) byte {
 type GetBoardCellStatesOutput struct {
 	CellStates [][]byte
 }
+
+type GameDTO struct {
+	BoardCellStates [][]byte
+}
+
+func toGameDTO(game *domain.Game) GameDTO {
+	return GameDTO{CellStatesFrom(game.GetBoard().GetCells())}
+}
