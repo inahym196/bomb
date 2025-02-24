@@ -48,8 +48,8 @@ func (c *CLIController) Run() {
 
 func (c *CLIController) getBoard() string {
 	var output string
-	states := c.gi.GetBoardCellStates().CellStates
-	for _, row := range states {
+	game := c.gi.GetGame()
+	for _, row := range game.BoardCellStates {
 		for _, state := range row {
 			output += fmt.Sprintf(" %s", stateToStr(state))
 		}
