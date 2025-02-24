@@ -11,6 +11,8 @@ type Cell struct {
 	state byte
 }
 
+func (c Cell) GetState() byte { return c.state }
+
 func NewCell(state byte) Cell {
 	if state != CellClosed && state != CellBomb && state != CellOpen {
 		return Cell{CellUndefined}
@@ -18,13 +20,11 @@ func NewCell(state byte) Cell {
 	return Cell{state}
 }
 
-func (c Cell) GetState() byte {
-	return c.state
-}
-
 type Board struct {
 	cells [][]Cell
 }
+
+func (b *Board) GetCells() [][]Cell { return b.cells }
 
 func NewBoard(width int) *Board {
 	board := &Board{}
@@ -52,8 +52,4 @@ func (b *Board) SetBombs(positionList []Position) {
 	for _, pos := range positionList {
 		b.cells[pos.Row][pos.Col] = NewCell(CellBomb)
 	}
-}
-
-func (b *Board) GetCells() [][]Cell {
-	return b.cells
 }
