@@ -13,8 +13,10 @@ type CLIController struct {
 	gi *interactor.GameInteractor
 }
 
-func NewCLIController(gi *interactor.GameInteractor) *CLIController {
-	return &CLIController{gi}
+func NewCLIController() *CLIController {
+	return &CLIController{
+		gi: interactor.NewGameInteractor(),
+	}
 }
 
 func (c *CLIController) Run() {
