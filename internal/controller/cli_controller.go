@@ -28,7 +28,17 @@ func (c *CLIController) Run() {
 		text := input.Text()
 		switch text {
 		case "show", "s":
-			fmt.Print(c.getBoard())
+			result, err := c.gi.GetGame()
+			if err != nil {
+				fmt.Print(err.Error())
+			}
+			fmt.Print(c.parseGame(result.GameDTO))
+		case "start":
+			result := c.gi.InitGame(interactor.InitGameParam{
+				BoardWidth: 8,
+				Bombs:      []interactor.Position{{Row: 0, Col: 0}, {Row: 1, Col: 2}},
+			})
+			fmt.Print(c.parseGame(result.GameDTO))
 		case "exit", "quit", "q":
 			fmt.Println("Exiting...")
 			return
@@ -46,9 +56,7 @@ func (c *CLIController) Run() {
 	}
 }
 
-func (c *CLIController) getBoard() string {
-	var output string
-	game := c.gi.GetGame()
+func (c *CLIController) parseGame(game interactor.GameDTO) (output string) {
 	for _, row := range game.BoardCellStates {
 		for _, state := range row {
 			output += fmt.Sprintf(" %s", stateToStr(state))
