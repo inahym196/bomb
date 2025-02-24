@@ -23,7 +23,8 @@ func (c *CLIController) Run() {
 		fmt.Println()
 		fmt.Print("Enter command> ")
 		input.Scan()
-		switch input.Text() {
+		text := input.Text()
+		switch text {
 		case "show", "s":
 			fmt.Print(c.getBoard())
 		case "exit", "quit", "q":
@@ -38,7 +39,7 @@ func (c *CLIController) Run() {
 			  > exit              Exit the program
 			`))
 		default:
-			fmt.Printf("\"%s\" is invalid command. Use \"help\"\n", input.Text())
+			fmt.Printf("\"%s\" is invalid command. Use \"help\"\n", text)
 		}
 	}
 }
