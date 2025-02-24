@@ -6,7 +6,6 @@ import (
 )
 
 func main() {
-
 	interactor := interactor.NewGameInteractor()
 	controller.NewCLIController(interactor).Run()
 }
