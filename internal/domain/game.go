@@ -4,6 +4,8 @@ type Game struct {
 	board *Board
 }
 
+func (g *Game) GetBoard() *Board { return g.board }
+
 type GameOption struct {
 	BoardWidth int
 	Bombs      []Position
@@ -16,8 +18,4 @@ func NewGame(opt *GameOption) *Game {
 	game := &Game{NewBoard(opt.BoardWidth)}
 	game.board.SetBombs(opt.Bombs)
 	return game
-}
-
-func (g *Game) GetBoard() *Board {
-	return g.board
 }
