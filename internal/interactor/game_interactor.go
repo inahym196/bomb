@@ -43,3 +43,20 @@ func (gi *GameInteractor) GetGame() (GetGameResult, error) {
 	}
 	return GetGameResult{toGameDTO(game)}, nil
 }
+
+type OpenCellParam struct {
+	Row int
+	Col int
+}
+
+type OpenCellResult struct {
+	GameDTO
+}
+
+func (gi *GameInteractor) OpenCell(OpenCellParam) (OpenCellResult, error) {
+	game := ImmemoryGame
+	if game == nil {
+		return OpenCellResult{}, fmt.Errorf("ゲームが初期化されていません")
+	}
+	return OpenCellResult{toGameDTO(game)}, nil
+}

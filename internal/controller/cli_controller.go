@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/MakeNowJust/heredoc"
@@ -42,6 +43,27 @@ func (c *CLIController) Run() {
 			result, err := c.gi.GetGame()
 			if err != nil {
 				fmt.Print(err.Error())
+			}
+			fmt.Print(c.parseGame(result.GameDTO))
+		case "open":
+			if wordLen != 3 {
+				fmt.Println("invalid num of args. See \"help\"")
+				continue
+			}
+			row, err := strconv.Atoi(words[1])
+			if err != nil {
+				fmt.Println("invalid row. row should be a number.")
+				continue
+			}
+			col, err := strconv.Atoi(words[2])
+			if err != nil {
+				fmt.Println("invalid column. column should be a number.")
+				continue
+			}
+			result, err := c.gi.OpenCell(interactor.OpenCellParam{Row: row, Col: col})
+			if err != nil {
+				fmt.Println(err.Error())
+				continue
 			}
 			fmt.Print(c.parseGame(result.GameDTO))
 		case "exit", "quit", "q":
