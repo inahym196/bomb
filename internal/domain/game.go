@@ -18,3 +18,7 @@ func NewGame(opt *GameOption) *Game {
 	game := &Game{NewBoard(opt.BoardWidth)}
 	return game
 }
+
+func (g *Game) OpenCell(row, col int) error {
+	return g.board.OpenCell(row, col)
+}

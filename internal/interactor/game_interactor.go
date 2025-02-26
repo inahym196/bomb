@@ -47,16 +47,16 @@ type InitGameResult struct {
 	GameDTO
 }
 
-func (gi *GameInteractor) InitGame(param InitGameParam) (*InitGameResult, error) {
+func (gi *GameInteractor) InitGame(param InitGameParam) (InitGameResult, error) {
 	opt := &domain.GameOption{
 		BoardWidth: param.BoardWidth,
 		BombCount:  param.BombCount,
 	}
 	newGame := domain.NewGame(opt)
 	if err := gi.game_repo.Save(newGame); err != nil {
-		return &InitGameResult{}, err
+		return InitGameResult{}, err
 	}
-	return &InitGameResult{toGameDTO(newGame)}, nil
+	return InitGameResult{toGameDTO(newGame)}, nil
 }
 
 type GetGameResult struct {
@@ -80,10 +80,17 @@ type OpenCellResult struct {
 	GameDTO
 }
 
-func (gi *GameInteractor) OpenCell(OpenCellParam) (OpenCellResult, error) {
+func (gi *GameInteractor) OpenCell(param OpenCellParam) (OpenCellResult, error) {
 	game, ok := gi.game_repo.Find()
 	if !ok {
 		return OpenCellResult{}, fmt.Errorf("ゲームが初期化されていません")
+	}
+	err := game.OpenCell(param.Row, param.Col)
+	if err != nil {
+		return OpenCellResult{}, err
+	}
+	if err := gi.game_repo.Save(game); err != nil {
+		return OpenCellResult{}, err
 	}
 	return OpenCellResult{toGameDTO(game)}, nil
 }
