@@ -8,16 +8,15 @@ const (
 )
 
 type Cell struct {
-	state byte
+	isOpened bool
+	isBomb   bool
 }
 
-func (c Cell) GetState() byte { return c.state }
+func (c Cell) IsOpened() bool { return c.isOpened }
+func (c Cell) IsBomb() bool   { return c.isBomb }
 
-func NewCell(state byte) Cell {
-	if state != CellClosed && state != CellBomb && state != CellOpen {
-		return Cell{CellUndefined}
-	}
-	return Cell{state}
+func NewCell(isOpened, isBomb bool) Cell {
+	return Cell{isOpened, isBomb}
 }
 
 type Board struct {
@@ -37,7 +36,7 @@ func initCells(width int) [][]Cell {
 	for i := range width {
 		cells[i] = make([]Cell, width)
 		for j := range width {
-			cells[i][j] = NewCell(CellClosed)
+			cells[i][j] = NewCell(false, false)
 		}
 	}
 	return cells
@@ -50,6 +49,6 @@ type Position struct {
 
 func (b *Board) SetBombs(positionList []Position) {
 	for _, pos := range positionList {
-		b.cells[pos.Row][pos.Col] = NewCell(CellBomb)
+		b.cells[pos.Row][pos.Col] = NewCell(false, true)
 	}
 }
