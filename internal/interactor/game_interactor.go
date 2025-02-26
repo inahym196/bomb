@@ -14,14 +14,9 @@ func NewGameInteractor() *GameInteractor {
 	return &GameInteractor{}
 }
 
-type Position struct {
-	Row int
-	Col int
-}
-
 type InitGameParam struct {
 	BoardWidth int
-	Bombs      []Position
+	BombCount  int
 }
 type InitGameResult struct {
 	GameDTO
@@ -30,19 +25,11 @@ type InitGameResult struct {
 func (gi *GameInteractor) InitGame(param InitGameParam) *InitGameResult {
 	opt := &domain.GameOption{
 		BoardWidth: param.BoardWidth,
-		Bombs:      toPositions(param.Bombs),
+		BombCount:  param.BombCount,
 	}
 	ImmemoryGame = domain.NewGame(opt)
 	dto := toGameDTO(ImmemoryGame)
 	return &InitGameResult{dto}
-}
-
-func toPositions(dto []Position) []domain.Position {
-	poss := make([]domain.Position, len(dto))
-	for i, pos := range dto {
-		poss[i] = domain.Position{Row: pos.Row, Col: pos.Col}
-	}
-	return poss
 }
 
 type GetGameResult struct {
