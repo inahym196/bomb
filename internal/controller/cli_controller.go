@@ -38,12 +38,19 @@ func (c *CLIController) Run() {
 				BombCount:  10,
 			})
 			fmt.Print(c.parseGame(result.GameDTO))
+		case "show":
+			result, err := c.gi.GetGame()
+			if err != nil {
+				fmt.Print(err.Error())
+			}
+			fmt.Print(c.parseGame(result.GameDTO))
 		case "exit", "quit", "q":
 			fmt.Println("Exiting...")
 			return
 		case "help", "h":
 			fmt.Print(heredoc.Doc(`
 			Available Commands:
+			  > start             Start Game
 			  > show              Show board
 			  > open <row> <col>  Open cell
 			  > help              Show this help message
