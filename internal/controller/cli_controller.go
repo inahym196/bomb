@@ -59,22 +59,16 @@ func (c *CLIController) Run() {
 func (c *CLIController) parseGame(game interactor.GameDTO) (output string) {
 	for _, row := range game.BoardCellStates {
 		for _, state := range row {
-			output += fmt.Sprintf(" %s", stateToStr(state))
+			output += fmt.Sprintf(" %s", cellToStr(state))
 		}
 		output += "\n"
 	}
 	return output
 }
 
-func stateToStr(state byte) string {
-	switch state {
-	case interactor.CellStateBomb:
-		return "B"
-	case interactor.CellStateOpen:
+func cellToStr(cell interactor.CellDTO) string {
+	if cell.IsOpened {
 		return " "
-	case interactor.CellStateClosed:
-		return "?"
-	default:
-		return ""
 	}
+	return "?"
 }
