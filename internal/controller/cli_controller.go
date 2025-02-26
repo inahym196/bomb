@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/MakeNowJust/heredoc"
 	"github.com/inahym196/bomb/internal/interactor"
@@ -22,18 +23,16 @@ func NewCLIController() *CLIController {
 func (c *CLIController) Run() {
 	input := bufio.NewScanner(os.Stdin)
 	for {
-		fmt.Println()
 		fmt.Print("Enter command> ")
 		input.Scan()
 		text := input.Text()
-		switch text {
-		case "show", "s":
-			result, err := c.gi.GetGame()
-			if err != nil {
-				fmt.Print(err.Error())
-			}
-			fmt.Print(c.parseGame(result.GameDTO))
-		case "start":
+		words := strings.Fields(text)
+		wordLen := len(words)
+		if wordLen == 0 {
+			continue
+		}
+		switch words[0] {
+		case "start", "restart", "init":
 			result := c.gi.InitGame(interactor.InitGameParam{
 				BoardWidth: 8,
 				Bombs:      []interactor.Position{{Row: 0, Col: 0}, {Row: 1, Col: 2}},
@@ -51,8 +50,9 @@ func (c *CLIController) Run() {
 			  > exit              Exit the program
 			`))
 		default:
-			fmt.Printf("\"%s\" is invalid command. Use \"help\"\n", text)
+			fmt.Printf("\"%s\" is invalid command. See \"help\"\n", text)
 		}
+		fmt.Println()
 	}
 }
 
