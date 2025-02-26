@@ -4,34 +4,26 @@ import (
 	"github.com/inahym196/bomb/internal/domain"
 )
 
-const (
-	CellStateUndefined byte = iota
-	CellStateClosed
-	CellStateBomb
-	CellStateOpen
-)
-
-func CellStatesFrom(cells [][]domain.Cell) [][]byte {
-	bytes := make([][]byte, len(cells))
-	for i, row := range cells {
-		bytes[i] = make([]byte, len(row))
-		for j, cell := range row {
-			bytes[i][j] = CellStateFrom(cell)
-		}
-	}
-	return bytes
+type CellDTO struct {
+	IsOpened bool
+	IsBomb   bool
 }
 
-func CellStateFrom(cell domain.Cell) byte {
-	switch cell.GetState() {
-	case domain.CellClosed:
-		return CellStateClosed
-	case domain.CellBomb:
-		return CellStateBomb
-	case domain.CellOpen:
-		return CellStateClosed
-	default:
-		return CellStateUndefined
+func CellsFrom(cells [][]domain.Cell) [][]CellDTO {
+	dto := make([][]CellDTO, len(cells))
+	for i, row := range cells {
+		dto[i] = make([]CellDTO, len(row))
+		for j, cell := range row {
+			dto[i][j] = CellFrom(cell)
+		}
+	}
+	return dto
+}
+
+func CellFrom(cell domain.Cell) CellDTO {
+	return CellDTO{
+		IsOpened: cell.IsOpened(),
+		IsBomb:   cell.IsBomb(),
 	}
 }
 
@@ -40,9 +32,9 @@ type GetBoardCellStatesOutput struct {
 }
 
 type GameDTO struct {
-	BoardCellStates [][]byte
+	BoardCellStates [][]CellDTO
 }
 
 func toGameDTO(game *domain.Game) GameDTO {
-	return GameDTO{CellStatesFrom(game.GetBoard().GetCells())}
+	return GameDTO{CellsFrom(game.GetBoard().GetCells())}
 }
