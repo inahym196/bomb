@@ -34,8 +34,8 @@ func (c *CLIController) Run() {
 		switch words[0] {
 		case "start", "restart", "init":
 			result := c.gi.InitGame(interactor.InitGameParam{
-				BoardWidth: 8,
-				Bombs:      []interactor.Position{{Row: 0, Col: 0}, {Row: 1, Col: 2}},
+				BoardWidth: 9,
+				BombCount:  10,
 			})
 			fmt.Print(c.parseGame(result.GameDTO))
 		case "exit", "quit", "q":

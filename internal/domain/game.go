@@ -8,7 +8,7 @@ func (g *Game) GetBoard() *Board { return g.board }
 
 type GameOption struct {
 	BoardWidth int
-	Bombs      []Position
+	BombCount  int
 }
 
 func NewGame(opt *GameOption) *Game {
@@ -16,6 +16,5 @@ func NewGame(opt *GameOption) *Game {
 		opt = &GameOption{}
 	}
 	game := &Game{NewBoard(opt.BoardWidth)}
-	game.board.SetBombs(opt.Bombs)
 	return game
 }
