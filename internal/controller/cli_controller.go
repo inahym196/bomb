@@ -34,10 +34,13 @@ func (c *CLIController) Run() {
 		}
 		switch words[0] {
 		case "start", "restart", "init":
-			result := c.gi.InitGame(interactor.InitGameParam{
+			result, err := c.gi.InitGame(interactor.InitGameParam{
 				BoardWidth: 9,
 				BombCount:  10,
 			})
+			if err != nil {
+				fmt.Print(err.Error())
+			}
 			fmt.Print(c.parseGame(result.GameDTO))
 		case "show":
 			result, err := c.gi.GetGame()

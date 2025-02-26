@@ -8,10 +8,35 @@ import (
 
 var ImmemoryGame *domain.Game
 
-type GameInteractor struct{}
+type ImmemoryGameRepository struct {
+	game *domain.Game
+}
+
+func NewInmemoryGameRepository() *ImmemoryGameRepository {
+	return &ImmemoryGameRepository{ImmemoryGame}
+}
+
+func (igr *ImmemoryGameRepository) Find() (game *domain.Game, ok bool) {
+	if igr.game == nil {
+		return nil, false
+	}
+	return igr.game, true
+}
+
+func (igr *ImmemoryGameRepository) Save(game *domain.Game) error {
+	if game == nil {
+		return fmt.Errorf("nil pointer error")
+	}
+	igr.game = game
+	return nil
+}
+
+type GameInteractor struct {
+	game_repo *ImmemoryGameRepository
+}
 
 func NewGameInteractor() *GameInteractor {
-	return &GameInteractor{}
+	return &GameInteractor{NewInmemoryGameRepository()}
 }
 
 type InitGameParam struct {
@@ -22,14 +47,16 @@ type InitGameResult struct {
 	GameDTO
 }
 
-func (gi *GameInteractor) InitGame(param InitGameParam) *InitGameResult {
+func (gi *GameInteractor) InitGame(param InitGameParam) (*InitGameResult, error) {
 	opt := &domain.GameOption{
 		BoardWidth: param.BoardWidth,
 		BombCount:  param.BombCount,
 	}
-	ImmemoryGame = domain.NewGame(opt)
-	dto := toGameDTO(ImmemoryGame)
-	return &InitGameResult{dto}
+	newGame := domain.NewGame(opt)
+	if err := gi.game_repo.Save(newGame); err != nil {
+		return &InitGameResult{}, err
+	}
+	return &InitGameResult{toGameDTO(newGame)}, nil
 }
 
 type GetGameResult struct {
@@ -37,8 +64,8 @@ type GetGameResult struct {
 }
 
 func (gi *GameInteractor) GetGame() (GetGameResult, error) {
-	game := ImmemoryGame
-	if game == nil {
+	game, ok := gi.game_repo.Find()
+	if !ok {
 		return GetGameResult{}, fmt.Errorf("ゲームが初期化されていません")
 	}
 	return GetGameResult{toGameDTO(game)}, nil
@@ -54,8 +81,8 @@ type OpenCellResult struct {
 }
 
 func (gi *GameInteractor) OpenCell(OpenCellParam) (OpenCellResult, error) {
-	game := ImmemoryGame
-	if game == nil {
+	game, ok := gi.game_repo.Find()
+	if !ok {
 		return OpenCellResult{}, fmt.Errorf("ゲームが初期化されていません")
 	}
 	return OpenCellResult{toGameDTO(game)}, nil
