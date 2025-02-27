@@ -54,7 +54,7 @@ func (b *Board) SetBomb(row, col int) {
 
 func (b *Board) OpenCell(row, col int) error {
 	if !b.inBoard(row, col) {
-		return fmt.Errorf("範囲内のセルを選択してください. rowは[0-%d], columnは[0-%d]", b.width-1, b.width-1)
+		return fmt.Errorf("不正な範囲が選択されました. 有効なrowは[0-%d], columnは[0-%d]です", b.width-1, b.width-1)
 	}
 	return b.cells[row][col].Open()
 }
