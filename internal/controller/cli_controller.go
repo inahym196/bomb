@@ -47,6 +47,13 @@ func (c *CLIController) Run() {
 				continue
 			}
 			fmt.Println(c.parseGame(result.GameDTO))
+		case "info":
+			game, err := c.gi.GetGame()
+			if err != nil {
+				fmt.Println(err.Error())
+				continue
+			}
+			fmt.Printf("gameState: %s\n", stateToStr(game.State))
 		case "show":
 			result, err := c.gi.GetGame()
 			if err != nil {
@@ -158,4 +165,18 @@ func cellToDebugStr(cell interactor.CellDTO) string {
 		return "□"
 	}
 	return " "
+}
+
+func stateToStr(state byte) string {
+	switch state {
+	case interactor.GameStateReady:
+		return "Ready"
+	case interactor.GameStatePlaying:
+		return "Playing"
+	case interactor.GameStateCompleted:
+		return "Completed"
+	case interactor.GameStateFailed:
+		return "Failed"
+	}
+	return "?"
 }
