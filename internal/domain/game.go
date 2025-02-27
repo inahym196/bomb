@@ -10,17 +10,11 @@ import (
 const (
 	GameStateReady byte = iota
 	GameStatePlaying
-	GameStateFinished
-)
-
-const (
-	GameResultUndefined byte = iota
-	GameResultSuccess
-	GameResultFailed
+	GameStateCompleted
+	GameStateFailed
 )
 
 type Game struct {
-	result     byte
 	state      byte
 	board      *Board
 	boardWidth int
@@ -28,6 +22,7 @@ type Game struct {
 }
 
 func (g *Game) GetBoard() *Board { return g.board }
+func (g *Game) GetState() byte   { return g.state }
 
 func NewGame(boardWidth, bombCount int) (*Game, error) {
 	if boardWidth < 2 {
@@ -38,7 +33,6 @@ func NewGame(boardWidth, bombCount int) (*Game, error) {
 		return nil, fmt.Errorf("boardWidthが%dの時、bombCountは%d以下を指定してください", boardWidth, maxBombCount)
 	}
 	return &Game{
-		result:     GameResultUndefined,
 		state:      GameStateReady,
 		board:      NewBoard(boardWidth),
 		boardWidth: boardWidth,
@@ -57,8 +51,7 @@ func (g *Game) OpenCell(row, col int) error {
 	}
 	openedCell := g.board.GetCells()[row][col]
 	if openedCell.IsBomb() {
-		g.state = GameStateFinished
-		g.result = GameResultFailed
+		g.state = GameStateFailed
 		return nil
 	}
 	if g.state == GameStateReady {
