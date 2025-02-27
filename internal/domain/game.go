@@ -8,13 +8,19 @@ import (
 )
 
 const (
-	GameStateUninitialized byte = iota
-	GameStateReady
+	GameStateReady byte = iota
 	GameStatePlaying
 	GameStateFinished
 )
 
+const (
+	GameResultUndefined byte = iota
+	GameResultSuccess
+	GameResultFailed
+)
+
 type Game struct {
+	result     byte
 	state      byte
 	board      *Board
 	boardWidth int
@@ -32,7 +38,8 @@ func NewGame(boardWidth, bombCount int) (*Game, error) {
 		return nil, fmt.Errorf("boardWidthが%dの時、bombCountは%d以下を指定してください", boardWidth, maxBombCount)
 	}
 	return &Game{
-		state:      GameStateUninitialized,
+		result:     GameResultUndefined,
+		state:      GameStateReady,
 		board:      NewBoard(boardWidth),
 		boardWidth: boardWidth,
 		bombCount:  bombCount,
@@ -48,11 +55,18 @@ func (g *Game) OpenCell(row, col int) error {
 	if err := g.board.OpenCell(row, col); err != nil {
 		return err
 	}
-	if g.state == GameStateUninitialized {
+	openedCell := g.board.GetCells()[row][col]
+	if openedCell.IsBomb() {
+		g.state = GameStateFinished
+		g.result = GameResultFailed
+		return nil
+	}
+	if g.state == GameStateReady {
 		poss := NewRandomPositions(g.bombCount, g.boardWidth, position{row, col})
 		for _, pos := range poss {
 			g.board.SetBomb(pos.row, pos.col)
 		}
+		g.state = GameStatePlaying
 	}
 	return nil
 }
