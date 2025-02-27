@@ -52,7 +52,7 @@ func (g *Game) OpenCell(row, col int) error {
 		return err
 	}
 	if g.state == GameStateUninitialized {
-		poss := NewRandomPositions(g.bombCount, g.boardWidth-1, position{row, col})
+		poss := NewRandomPositions(g.bombCount, g.boardWidth, position{row, col})
 		for _, pos := range poss {
 			g.board.SetBomb(pos.row, pos.col)
 		}

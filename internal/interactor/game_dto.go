@@ -28,7 +28,7 @@ func CellFrom(cell domain.Cell) CellDTO {
 }
 
 type GameDTO struct {
-	BoardCellStates [][]CellDTO
+	BoardCells [][]CellDTO
 }
 
 func toGameDTO(game *domain.Game) GameDTO {

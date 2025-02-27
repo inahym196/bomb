@@ -48,6 +48,12 @@ func (c *CLIController) Run() {
 				fmt.Print(err.Error())
 			}
 			fmt.Print(c.parseGame(result.GameDTO))
+		case "debug":
+			result, err := c.gi.GetGame()
+			if err != nil {
+				fmt.Print(err.Error())
+			}
+			fmt.Print(c.debugGame(result.GameDTO))
 		case "open":
 			if wordLen != 3 {
 				fmt.Println("invalid num of args. See \"help\"")
@@ -89,9 +95,9 @@ func (c *CLIController) Run() {
 }
 
 func (c *CLIController) parseGame(game interactor.GameDTO) (output string) {
-	for _, row := range game.BoardCellStates {
-		for _, state := range row {
-			output += fmt.Sprintf(" %s", cellToStr(state))
+	for _, row := range game.BoardCells {
+		for _, cell := range row {
+			output += fmt.Sprintf(" %s", cellToStr(cell))
 		}
 		output += "\n"
 	}
@@ -99,8 +105,30 @@ func (c *CLIController) parseGame(game interactor.GameDTO) (output string) {
 }
 
 func cellToStr(cell interactor.CellDTO) string {
-	if cell.IsOpened {
-		return " "
+	if !cell.IsOpened {
+		return "□"
 	}
-	return "?"
+	if cell.IsBomb {
+		return "B"
+	}
+	return " "
+}
+func (c *CLIController) debugGame(game interactor.GameDTO) (output string) {
+	for _, row := range game.BoardCells {
+		for _, cell := range row {
+			output += fmt.Sprintf(" %s", cellToDebugStr(cell))
+		}
+		output += "\n"
+	}
+	return output
+}
+
+func cellToDebugStr(cell interactor.CellDTO) string {
+	if cell.IsBomb {
+		return "B"
+	}
+	if !cell.IsOpened {
+		return "□"
+	}
+	return " "
 }
