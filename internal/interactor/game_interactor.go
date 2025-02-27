@@ -48,7 +48,10 @@ type InitGameResult struct {
 }
 
 func (gi *GameInteractor) InitGame(param InitGameParam) (InitGameResult, error) {
-	newGame := domain.NewGame(param.BoardWidth, param.BombCount)
+	newGame, err := domain.NewGame(param.BoardWidth, param.BombCount)
+	if err != nil {
+		return InitGameResult{}, err
+	}
 	if err := gi.game_repo.Save(newGame); err != nil {
 		return InitGameResult{}, err
 	}

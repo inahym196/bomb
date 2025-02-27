@@ -35,7 +35,7 @@ func (c *CLIController) Run() {
 		case "start", "restart", "init":
 			boardWidth, bombCount, err := c.parseStartArgs(words)
 			if err != nil {
-				fmt.Print(err.Error())
+				fmt.Println(err.Error())
 				continue
 			}
 			result, err := c.gi.InitGame(interactor.InitGameParam{
@@ -43,28 +43,28 @@ func (c *CLIController) Run() {
 				BombCount:  bombCount,
 			})
 			if err != nil {
-				fmt.Print(err.Error())
+				fmt.Println(err.Error())
 				continue
 			}
 			fmt.Print(c.parseGame(result.GameDTO))
 		case "show":
 			result, err := c.gi.GetGame()
 			if err != nil {
-				fmt.Print(err.Error())
+				fmt.Println(err.Error())
 				continue
 			}
 			fmt.Print(c.parseGame(result.GameDTO))
 		case "debug":
 			result, err := c.gi.GetGame()
 			if err != nil {
-				fmt.Print(err.Error())
+				fmt.Println(err.Error())
 				continue
 			}
 			fmt.Print(c.debugGame(result.GameDTO))
 		case "open":
 			row, col, err := c.parseOpenArgs(words)
 			if err != nil {
-				fmt.Print(err.Error())
+				fmt.Println(err.Error())
 				continue
 			}
 			result, err := c.gi.OpenCell(interactor.OpenCellParam{Row: row, Col: col})
