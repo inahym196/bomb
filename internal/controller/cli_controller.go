@@ -28,8 +28,7 @@ func (c *CLIController) Run() {
 		input.Scan()
 		text := input.Text()
 		words := strings.Fields(text)
-		wordLen := len(words)
-		if wordLen == 0 {
+		if len(words) == 0 {
 			continue
 		}
 		switch words[0] {
@@ -37,6 +36,7 @@ func (c *CLIController) Run() {
 			boardWidth, bombCount, err := c.parseStartArgs(words)
 			if err != nil {
 				fmt.Print(err.Error())
+				continue
 			}
 			result, err := c.gi.InitGame(interactor.InitGameParam{
 				BoardWidth: boardWidth,
@@ -44,18 +44,21 @@ func (c *CLIController) Run() {
 			})
 			if err != nil {
 				fmt.Print(err.Error())
+				continue
 			}
 			fmt.Print(c.parseGame(result.GameDTO))
 		case "show":
 			result, err := c.gi.GetGame()
 			if err != nil {
 				fmt.Print(err.Error())
+				continue
 			}
 			fmt.Print(c.parseGame(result.GameDTO))
 		case "debug":
 			result, err := c.gi.GetGame()
 			if err != nil {
 				fmt.Print(err.Error())
+				continue
 			}
 			fmt.Print(c.debugGame(result.GameDTO))
 		case "open":
