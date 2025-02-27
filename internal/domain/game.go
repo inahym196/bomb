@@ -22,23 +22,12 @@ type Game struct {
 
 func (g *Game) GetBoard() *Board { return g.board }
 
-type GameOption struct {
-	BoardWidth int
-	BombCount  int
-}
-
-func NewGame(opt *GameOption) *Game {
-	if opt == nil {
-		opt = &GameOption{
-			BoardWidth: 9,
-			BombCount:  10,
-		}
-	}
+func NewGame(boardWidth, bombCount int) *Game {
 	return &Game{
 		state:      GameStateUninitialized,
-		board:      NewBoard(opt.BoardWidth),
-		boardWidth: opt.BoardWidth,
-		bombCount:  opt.BombCount,
+		board:      NewBoard(boardWidth),
+		boardWidth: boardWidth,
+		bombCount:  bombCount,
 	}
 }
 
