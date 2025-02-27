@@ -10,8 +10,12 @@ type Cell struct {
 func (c Cell) IsOpened() bool { return c.isOpened }
 func (c Cell) IsBomb() bool   { return c.isBomb }
 
-func NewCell(isOpened, isBomb bool) Cell {
-	return Cell{isOpened, isBomb}
+func NewCell() Cell {
+	return Cell{false, false}
+}
+
+func NewBomb() Cell {
+	return Cell{false, true}
 }
 
 func (c *Cell) Open() error {
@@ -38,25 +42,14 @@ func initCells(width int) [][]Cell {
 	for i := range width {
 		cells[i] = make([]Cell, width)
 		for j := range width {
-			cells[i][j] = NewCell(false, false)
+			cells[i][j] = NewCell()
 		}
 	}
 	return cells
 }
 
-type Position struct {
-	Row int
-	Col int
-}
-
-func (b *Board) SetBombs(positionList []Position) {
-	for _, pos := range positionList {
-		b.cells[pos.Row][pos.Col] = NewCell(false, true)
-	}
-}
-
-func (b *Board) inBoard(row, col int) bool {
-	return 0 <= row && row < b.width && 0 <= col && col < b.width
+func (b *Board) SetBomb(row, col int) {
+	b.cells[row][col] = NewBomb()
 }
 
 func (b *Board) OpenCell(row, col int) error {
@@ -64,4 +57,8 @@ func (b *Board) OpenCell(row, col int) error {
 		return fmt.Errorf("範囲内のセルを選択してください. rowは[0-%d], columnは[0-%d]", b.width-1, b.width-1)
 	}
 	return b.cells[row][col].Open()
+}
+
+func (b *Board) inBoard(row, col int) bool {
+	return 0 <= row && row < b.width && 0 <= col && col < b.width
 }
