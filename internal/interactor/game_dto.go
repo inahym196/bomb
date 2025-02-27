@@ -27,10 +27,6 @@ func CellFrom(cell domain.Cell) CellDTO {
 	}
 }
 
-type GetBoardCellStatesOutput struct {
-	CellStates [][]byte
-}
-
 type GameDTO struct {
 	BoardCellStates [][]CellDTO
 }
