@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"fmt"
 	"math/rand"
 	"reflect"
 	"slices"
@@ -22,13 +23,20 @@ type Game struct {
 
 func (g *Game) GetBoard() *Board { return g.board }
 
-func NewGame(boardWidth, bombCount int) *Game {
+func NewGame(boardWidth, bombCount int) (*Game, error) {
+	if boardWidth < 2 {
+		return nil, fmt.Errorf("boardWidthの数は2以上を指定してください")
+	}
+	maxBombCount := (boardWidth - 1) * (boardWidth - 1)
+	if maxBombCount < bombCount {
+		return nil, fmt.Errorf("boardWidthが%dの時、bombCountは%d以下を指定してください", boardWidth, maxBombCount)
+	}
 	return &Game{
 		state:      GameStateUninitialized,
 		board:      NewBoard(boardWidth),
 		boardWidth: boardWidth,
 		bombCount:  bombCount,
-	}
+	}, nil
 }
 
 type position struct {
