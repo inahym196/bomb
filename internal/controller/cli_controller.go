@@ -34,9 +34,13 @@ func (c *CLIController) Run() {
 		}
 		switch words[0] {
 		case "start", "restart", "init":
+			boardWidth, bombCount, err := c.parseStartArgs(words)
+			if err != nil {
+				fmt.Print(err.Error())
+			}
 			result, err := c.gi.InitGame(interactor.InitGameParam{
-				BoardWidth: 9,
-				BombCount:  10,
+				BoardWidth: boardWidth,
+				BombCount:  bombCount,
 			})
 			if err != nil {
 				fmt.Print(err.Error())
@@ -81,17 +85,32 @@ func (c *CLIController) Run() {
 		case "help", "h":
 			fmt.Print(heredoc.Doc(`
 			Available Commands:
-			  > start             Start Game
-			  > show              Show board
-			  > open <row> <col>  Open cell
-			  > help              Show this help message
-			  > exit              Exit the program
+			  > start <boardWidth> <bombCount>  Start Game
+			  > show                            Show board
+			  > open <row> <col>                Open cell
+			  > help                            Show this help message
+			  > exit                            Exit the program
 			`))
 		default:
 			fmt.Printf("\"%s\"は無効なコマンドです. \"help\"コマンドを確認してください\n", text)
 		}
 		fmt.Println()
 	}
+}
+
+func (c *CLIController) parseStartArgs(words []string) (boardWidth, bombCount int, err error) {
+	if len(words) != 3 {
+		return 0, 0, fmt.Errorf("引数の数が不正です. \"help\"コマンドを確認してください")
+	}
+	boardWidth, err = strconv.Atoi(words[1])
+	if err != nil {
+		return 0, 0, fmt.Errorf("boardWidthの値が不正です. 数字を入力してください")
+	}
+	bombCount, err = strconv.Atoi(words[2])
+	if err != nil {
+		return 0, 0, fmt.Errorf("bombCountの値が不正です. 数字を入力してください")
+	}
+	return boardWidth, bombCount, nil
 }
 
 func (c *CLIController) parseGame(game interactor.GameDTO) (output string) {
