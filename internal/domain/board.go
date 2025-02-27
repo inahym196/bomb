@@ -2,13 +2,6 @@ package domain
 
 import "fmt"
 
-const (
-	CellUndefined byte = iota
-	CellClosed
-	CellBomb
-	CellOpen
-)
-
 type Cell struct {
 	isOpened bool
 	isBomb   bool
