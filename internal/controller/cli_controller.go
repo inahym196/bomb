@@ -59,18 +59,9 @@ func (c *CLIController) Run() {
 			}
 			fmt.Print(c.debugGame(result.GameDTO))
 		case "open":
-			if wordLen != 3 {
-				fmt.Println("引数の数が不正です. \"help\"コマンドを確認してください")
-				continue
-			}
-			row, err := strconv.Atoi(words[1])
+			row, col, err := c.parseOpenArgs(words)
 			if err != nil {
-				fmt.Println("rowの値が不正です. 数字を入力してください")
-				continue
-			}
-			col, err := strconv.Atoi(words[2])
-			if err != nil {
-				fmt.Println("columnの値が不正です. 数字を入力してください")
+				fmt.Print(err.Error())
 				continue
 			}
 			result, err := c.gi.OpenCell(interactor.OpenCellParam{Row: row, Col: col})
@@ -111,6 +102,21 @@ func (c *CLIController) parseStartArgs(words []string) (boardWidth, bombCount in
 		return 0, 0, fmt.Errorf("bombCountの値が不正です. 数字を入力してください")
 	}
 	return boardWidth, bombCount, nil
+}
+
+func (c *CLIController) parseOpenArgs(words []string) (row, col int, err error) {
+	if len(words) != 3 {
+		return 0, 0, fmt.Errorf("引数の数が不正です. \"help\"コマンドを確認してください")
+	}
+	row, err = strconv.Atoi(words[1])
+	if err != nil {
+		return 0, 0, fmt.Errorf("rowの値が不正です. 数字を入力してください")
+	}
+	col, err = strconv.Atoi(words[2])
+	if err != nil {
+		return 0, 0, fmt.Errorf("columnの値が不正です. 数字を入力してください")
+	}
+	return row, col, nil
 }
 
 func (c *CLIController) parseGame(game interactor.GameDTO) (output string) {
