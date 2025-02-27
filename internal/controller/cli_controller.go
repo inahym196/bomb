@@ -46,21 +46,21 @@ func (c *CLIController) Run() {
 				fmt.Println(err.Error())
 				continue
 			}
-			fmt.Print(c.parseGame(result.GameDTO))
+			fmt.Println(c.parseGame(result.GameDTO))
 		case "show":
 			result, err := c.gi.GetGame()
 			if err != nil {
 				fmt.Println(err.Error())
 				continue
 			}
-			fmt.Print(c.parseGame(result.GameDTO))
+			fmt.Println(c.parseGame(result.GameDTO))
 		case "debug":
 			result, err := c.gi.GetGame()
 			if err != nil {
 				fmt.Println(err.Error())
 				continue
 			}
-			fmt.Print(c.debugGame(result.GameDTO))
+			fmt.Println(c.debugGame(result.GameDTO))
 		case "open":
 			row, col, err := c.parseOpenArgs(words)
 			if err != nil {
@@ -72,12 +72,12 @@ func (c *CLIController) Run() {
 				fmt.Println(err.Error())
 				continue
 			}
-			fmt.Print(c.parseGame(result.GameDTO))
+			fmt.Println(c.parseGame(result.GameDTO))
 		case "exit", "quit", "q":
 			fmt.Println("終了中...")
 			return
 		case "help", "h":
-			fmt.Print(heredoc.Doc(`
+			fmt.Println(heredoc.Doc(`
 			Available Commands:
 			  > start <boardWidth> <bombCount>  Start Game
 			  > show                            Show board
@@ -86,9 +86,8 @@ func (c *CLIController) Run() {
 			  > exit                            Exit the program
 			`))
 		default:
-			fmt.Printf("\"%s\"は無効なコマンドです. \"help\"コマンドを確認してください\n", text)
+			fmt.Printf("\"%s\"は無効なコマンドです. \"help\"コマンドを確認してください\n\n", text)
 		}
-		fmt.Println()
 	}
 }
 
