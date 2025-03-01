@@ -9,6 +9,15 @@ type CellDTO struct {
 	IsBomb   bool
 }
 
+type GameDTO struct {
+	BoardCells [][]CellDTO
+	State      byte
+}
+
+func toGameDTO(game *domain.Game) GameDTO {
+	return GameDTO{CellsFrom(game.GetBoard().GetCells()), game.GetState()}
+}
+
 func CellsFrom(cells [][]domain.Cell) [][]CellDTO {
 	dto := make([][]CellDTO, len(cells))
 	for i, row := range cells {
@@ -25,13 +34,4 @@ func CellFrom(cell domain.Cell) CellDTO {
 		IsOpened: cell.IsOpened(),
 		IsBomb:   cell.IsBomb(),
 	}
-}
-
-type GameDTO struct {
-	BoardCells [][]CellDTO
-	State      byte
-}
-
-func toGameDTO(game *domain.Game) GameDTO {
-	return GameDTO{CellsFrom(game.GetBoard().GetCells()), game.GetState()}
 }

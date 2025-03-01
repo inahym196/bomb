@@ -55,7 +55,7 @@ func (g *Game) OpenCell(row, col int) error {
 		return nil
 	}
 	if g.state == GameStateReady {
-		poss := NewRandomPositions(g.bombCount, g.boardWidth, position{row, col})
+		poss := newRandomPositions(g.bombCount, g.boardWidth, position{row, col})
 		for _, pos := range poss {
 			g.board.SetBomb(pos.row, pos.col)
 		}
@@ -64,7 +64,7 @@ func (g *Game) OpenCell(row, col int) error {
 	return nil
 }
 
-func NewRandomPositions(n, maxN int, except position) []position {
+func newRandomPositions(n, maxN int, except position) []position {
 	poss := make([]position, 0, n)
 	for len(poss) != n {
 		pos := position{rand.Intn(maxN), rand.Intn(maxN)}
