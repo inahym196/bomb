@@ -146,7 +146,7 @@ func cellToStr(cell interactor.CellDTO) string {
 	if cell.IsBomb {
 		return "B"
 	}
-	return " "
+	return fmt.Sprint(cell.BombCount)
 }
 func (c *CLIController) debugGame(game interactor.GameDTO) (output string) {
 	for _, row := range game.BoardCells {
@@ -162,10 +162,7 @@ func cellToDebugStr(cell interactor.CellDTO) string {
 	if cell.IsBomb {
 		return "B"
 	}
-	if !cell.IsOpened {
-		return "□"
-	}
-	return " "
+	return fmt.Sprint(cell.BombCount)
 }
 
 func stateToStr(state byte) string {

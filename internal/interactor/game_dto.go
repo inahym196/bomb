@@ -5,8 +5,9 @@ import (
 )
 
 type CellDTO struct {
-	IsOpened bool
-	IsBomb   bool
+	IsOpened  bool
+	IsBomb    bool
+	BombCount int
 }
 
 type GameDTO struct {
@@ -15,23 +16,24 @@ type GameDTO struct {
 }
 
 func toGameDTO(game *domain.Game) GameDTO {
-	return GameDTO{CellsFrom(game.GetBoard().GetCells()), game.GetState()}
+	return GameDTO{cellsFrom(game.GetBoard().GetCells()), game.GetState()}
 }
 
-func CellsFrom(cells [][]domain.Cell) [][]CellDTO {
+func cellsFrom(cells [][]domain.Cell) [][]CellDTO {
 	dto := make([][]CellDTO, len(cells))
 	for i, row := range cells {
 		dto[i] = make([]CellDTO, len(row))
 		for j, cell := range row {
-			dto[i][j] = CellFrom(cell)
+			dto[i][j] = cellFrom(cell)
 		}
 	}
 	return dto
 }
 
-func CellFrom(cell domain.Cell) CellDTO {
+func cellFrom(cell domain.Cell) CellDTO {
 	return CellDTO{
-		IsOpened: cell.IsOpened(),
-		IsBomb:   cell.IsBomb(),
+		IsOpened:  cell.IsOpened(),
+		IsBomb:    cell.IsBomb(),
+		BombCount: cell.GetBombCount(),
 	}
 }

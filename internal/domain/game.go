@@ -55,16 +55,19 @@ func (g *Game) OpenCell(row, col int) error {
 		return nil
 	}
 	if g.state == GameStateReady {
-		poss := newRandomPositions(g.bombCount, g.boardWidth, position{row, col})
+		poss := g.newRandomPositions(position{row, col})
 		for _, pos := range poss {
 			g.board.SetBomb(pos.row, pos.col)
+			g.incrementBombCountArroundBomb(pos.row, pos.col, g.board.IncrementBombCount)
 		}
 		g.state = GameStatePlaying
 	}
 	return nil
 }
 
-func newRandomPositions(n, maxN int, except position) []position {
+func (g *Game) newRandomPositions(except position) []position {
+	n := g.bombCount
+	maxN := g.boardWidth
 	poss := make([]position, 0, n)
 	for len(poss) != n {
 		pos := position{rand.Intn(maxN), rand.Intn(maxN)}
@@ -73,4 +76,19 @@ func newRandomPositions(n, maxN int, except position) []position {
 		}
 	}
 	return poss
+}
+
+func (g *Game) incrementBombCountArroundBomb(row, col int, incrementFunc func(row, col int) error) {
+	cells := g.board.GetCells()
+	dirs := []struct{ dy, dx int }{
+		{-1, -1}, {-1, 0}, {-1, 1},
+		{0, -1}, {0, 1},
+		{1, -1}, {1, 0}, {1, 1},
+	}
+	for i := range dirs {
+		nx, ny := col+dirs[i].dx, row+dirs[i].dy
+		if g.board.inBoard(nx, ny) && !cells[ny][nx].IsBomb() {
+			incrementFunc(ny, nx)
+		}
+	}
 }
