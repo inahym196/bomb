@@ -10,20 +10,15 @@ type Cell struct {
 func (c Cell) IsOpened() bool { return c.isOpened }
 func (c Cell) IsBomb() bool   { return c.isBomb }
 
-func NewCell() Cell {
-	return Cell{false, false}
+func NewCell(isBomb bool) Cell {
+	return Cell{false, isBomb}
 }
 
-func NewBomb() Cell {
-	return Cell{false, true}
-}
-
-func (c *Cell) Open() error {
+func (c Cell) Open() (Cell, error) {
 	if c.isOpened {
-		return fmt.Errorf("すでに開放済みのセルです")
+		return Cell{}, fmt.Errorf("すでに開放済みのセルです")
 	}
-	c.isOpened = true
-	return nil
+	return Cell{isOpened: true, isBomb: c.isBomb}, nil
 }
 
 type Board struct {
@@ -42,21 +37,26 @@ func initCells(width int) [][]Cell {
 	for i := range width {
 		cells[i] = make([]Cell, width)
 		for j := range width {
-			cells[i][j] = NewCell()
+			cells[i][j] = NewCell(false)
 		}
 	}
 	return cells
 }
 
 func (b *Board) SetBomb(row, col int) {
-	b.cells[row][col] = NewBomb()
+	b.cells[row][col] = NewCell(true)
 }
 
 func (b *Board) OpenCell(row, col int) error {
 	if !b.inBoard(row, col) {
 		return fmt.Errorf("不正な範囲が選択されました. 有効なrowは[0-%d], columnは[0-%d]です", b.width-1, b.width-1)
 	}
-	return b.cells[row][col].Open()
+	openedCell, err := b.cells[row][col].Open()
+	if err != nil {
+		return err
+	}
+	b.cells[row][col] = openedCell
+	return nil
 }
 
 func (b *Board) inBoard(row, col int) bool {
