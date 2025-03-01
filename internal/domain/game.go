@@ -46,28 +46,18 @@ type position struct {
 }
 
 func (g *Game) OpenCell(row, col int) error {
-	if err := g.board.OpenCell(row, col); err != nil {
-		return err
-	}
-	// TODO: state管理は別の関数に分けたい
-	if g.bombCount == g.board.GetClosedCellCount() {
-		g.state = GameStateCompleted
-		return nil
-	}
-	openedCell := g.board.GetCells()[row][col]
-	if openedCell.IsBomb() {
-		g.state = GameStateFailed
-		return nil
-	}
 	if g.state == GameStateReady {
-		poss := g.newRandomPositions(position{row, col})
-		for _, pos := range poss {
-			g.board.SetBomb(pos.row, pos.col)
-			g.incrementBombCountArroundBomb(pos.row, pos.col, g.board.IncrementBombCount)
-		}
-		g.state = GameStatePlaying
+		g.setRandomBombs(row, col)
 	}
-	return nil
+	return g.board.OpenCell(row, col)
+}
+
+func (g *Game) setRandomBombs(exceptRow, exceptCol int) {
+	poss := g.newRandomPositions(position{exceptRow, exceptCol})
+	for _, pos := range poss {
+		g.board.SetBomb(pos.row, pos.col)
+		g.incrementBombCountArroundBomb(pos.row, pos.col, g.board.IncrementBombCount)
+	}
 }
 
 func (g *Game) newRandomPositions(except position) []position {
@@ -95,5 +85,16 @@ func (g *Game) incrementBombCountArroundBomb(row, col int, incrementFunc func(ro
 		if g.board.inBoard(nx, ny) && !cells[ny][nx].IsBomb() {
 			incrementFunc(ny, nx)
 		}
+	}
+}
+
+func (g *Game) UpdateState(row, col int) {
+	switch {
+	case g.bombCount == g.board.GetClosedCellCount():
+		g.state = GameStateCompleted
+	case g.board.GetCells()[row][col].IsBomb():
+		g.state = GameStateFailed
+	case g.state == GameStateReady:
+		g.state = GameStatePlaying
 	}
 }
