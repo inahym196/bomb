@@ -49,6 +49,11 @@ func (g *Game) OpenCell(row, col int) error {
 	if err := g.board.OpenCell(row, col); err != nil {
 		return err
 	}
+	// TODO: state管理は別の関数に分けたい
+	if g.bombCount == g.board.GetClosedCellCount() {
+		g.state = GameStateCompleted
+		return nil
+	}
 	openedCell := g.board.GetCells()[row][col]
 	if openedCell.IsBomb() {
 		g.state = GameStateFailed
