@@ -38,14 +38,16 @@ func (c Cell) IncrementBombCount() (Cell, error) {
 }
 
 type Board struct {
-	width int
-	cells [][]Cell
+	width           int
+	cells           [][]Cell
+	closedCellCount int
 }
 
-func (b *Board) GetCells() [][]Cell { return b.cells }
+func (b *Board) GetCells() [][]Cell              { return b.cells }
+func (b *Board) GetClosedCellCount() (count int) { return b.closedCellCount }
 
 func NewBoard(width int) *Board {
-	return &Board{width, initCells(width)}
+	return &Board{width, initCells(width), width * width}
 }
 
 func initCells(width int) [][]Cell {
@@ -72,6 +74,7 @@ func (b *Board) OpenCell(row, col int) error {
 		return err
 	}
 	b.cells[row][col] = openedCell
+	b.closedCellCount--
 	return nil
 }
 
