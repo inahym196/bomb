@@ -3,22 +3,38 @@ package domain
 import "fmt"
 
 type Cell struct {
-	isOpened bool
-	isBomb   bool
+	isOpened  bool
+	isBomb    bool
+	bombCount int
 }
 
-func (c Cell) IsOpened() bool { return c.isOpened }
-func (c Cell) IsBomb() bool   { return c.isBomb }
+func (c Cell) IsOpened() bool    { return c.isOpened }
+func (c Cell) IsBomb() bool      { return c.isBomb }
+func (c Cell) GetBombCount() int { return c.bombCount }
 
 func NewCell(isBomb bool) Cell {
-	return Cell{false, isBomb}
+	if isBomb {
+		return Cell{false, true, -1}
+	}
+	return Cell{false, false, 0}
 }
 
 func (c Cell) Open() (Cell, error) {
 	if c.isOpened {
 		return Cell{}, fmt.Errorf("すでに開放済みのセルです")
 	}
-	return Cell{isOpened: true, isBomb: c.isBomb}, nil
+	return Cell{isOpened: true, isBomb: c.isBomb, bombCount: c.bombCount}, nil
+}
+
+func (c Cell) IncrementBombCount() (Cell, error) {
+	if c.bombCount == -1 {
+		return Cell{}, fmt.Errorf("ボムのマスは計算対象外です")
+	}
+	return Cell{
+		isOpened:  c.isOpened,
+		isBomb:    c.isBomb,
+		bombCount: c.bombCount + 1,
+	}, nil
 }
 
 type Board struct {
@@ -61,4 +77,11 @@ func (b *Board) OpenCell(row, col int) error {
 
 func (b *Board) inBoard(row, col int) bool {
 	return 0 <= row && row < b.width && 0 <= col && col < b.width
+}
+
+func (b *Board) IncrementBombCount(row, col int) (err error) {
+	if b.cells[row][col], err = b.cells[row][col].IncrementBombCount(); err != nil {
+		return err
+	}
+	return nil
 }
