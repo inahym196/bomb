@@ -27,13 +27,6 @@ func CellFrom(cell domain.Cell) CellDTO {
 	}
 }
 
-const (
-	GameStateReady byte = iota
-	GameStatePlaying
-	GameStateCompleted
-	GameStateFailed
-)
-
 type GameDTO struct {
 	BoardCells [][]CellDTO
 	State      byte
