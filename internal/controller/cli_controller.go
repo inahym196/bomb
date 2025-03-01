@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/MakeNowJust/heredoc"
+	"github.com/inahym196/bomb/internal/domain"
 	"github.com/inahym196/bomb/internal/interactor"
 )
 
@@ -169,13 +170,13 @@ func cellToDebugStr(cell interactor.CellDTO) string {
 
 func stateToStr(state byte) string {
 	switch state {
-	case interactor.GameStateReady:
+	case domain.GameStateReady:
 		return "Ready"
-	case interactor.GameStatePlaying:
+	case domain.GameStatePlaying:
 		return "Playing"
-	case interactor.GameStateCompleted:
+	case domain.GameStateCompleted:
 		return "Completed"
-	case interactor.GameStateFailed:
+	case domain.GameStateFailed:
 		return "Failed"
 	}
 	return "?"
