@@ -46,10 +46,17 @@ type position struct {
 }
 
 func (g *Game) OpenCell(row, col int) error {
+	if g.isFinished() {
+		return fmt.Errorf("ゲームはすでに終了しています")
+	}
 	if g.state == GameStateReady {
 		g.setRandomBombs(row, col)
 	}
 	return g.board.OpenCell(row, col)
+}
+
+func (g *Game) isFinished() bool {
+	return g.state == GameStateCompleted || g.state == GameStateFailed
 }
 
 func (g *Game) setRandomBombs(exceptRow, exceptCol int) {
