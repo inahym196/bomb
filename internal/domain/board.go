@@ -1,6 +1,10 @@
 package domain
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/inahym196/bomb/pkg/shared"
+)
 
 type Cell struct {
 	isOpened  bool
@@ -44,6 +48,7 @@ type Board struct {
 }
 
 func (b *Board) GetCells() [][]Cell              { return b.cells }
+func (b *Board) GetCellAt(x, y int) Cell         { return b.cells[y][x] }
 func (b *Board) GetClosedCellCount() (count int) { return b.closedCellCount }
 
 func NewBoard(width int) *Board {
@@ -61,29 +66,29 @@ func initCells(width int) [][]Cell {
 	return cells
 }
 
-func (b *Board) SetBomb(row, col int) {
-	b.cells[row][col] = NewCell(true)
+func (b *Board) SetBomb(pos shared.Position) {
+	b.cells[pos.Y][pos.X] = NewCell(true)
 }
 
-func (b *Board) OpenCell(row, col int) error {
-	if !b.inBoard(row, col) {
+func (b *Board) OpenCell(pos shared.Position) error {
+	if !b.inBoard(pos) {
 		return fmt.Errorf("不正な範囲が選択されました. 有効なrowは[0-%d], columnは[0-%d]です", b.width-1, b.width-1)
 	}
-	openedCell, err := b.cells[row][col].Open()
+	openedCell, err := b.cells[pos.Y][pos.X].Open()
 	if err != nil {
 		return err
 	}
-	b.cells[row][col] = openedCell
+	b.cells[pos.Y][pos.X] = openedCell
 	b.closedCellCount--
 	return nil
 }
 
-func (b *Board) inBoard(row, col int) bool {
-	return 0 <= row && row < b.width && 0 <= col && col < b.width
+func (b *Board) inBoard(pos shared.Position) bool {
+	return 0 <= pos.Y && pos.Y < b.width && 0 <= pos.X && pos.X < b.width
 }
 
-func (b *Board) IncrementBombCount(row, col int) (err error) {
-	if b.cells[row][col], err = b.cells[row][col].IncrementBombCount(); err != nil {
+func (b *Board) IncrementBombCount(pos shared.Position) (err error) {
+	if b.cells[pos.Y][pos.X], err = b.cells[pos.Y][pos.X].IncrementBombCount(); err != nil {
 		return err
 	}
 	return nil
