@@ -16,6 +16,8 @@ func (b *Board) GetCells() [][]Cell                 { return b.cells }
 func (b *Board) GetCellAt(pos shared.Position) Cell { return b.cells[pos.Y][pos.X] }
 func (b *Board) GetClosedCellCount() (count int)    { return b.closedCellCount }
 
+func (b *Board) setCellAt(pos shared.Position, cell Cell) { b.cells[pos.Y][pos.X] = cell }
+
 func NewBoard(width int) *Board {
 	return &Board{width, initCells(width), width * width}
 }
@@ -32,18 +34,18 @@ func initCells(width int) [][]Cell {
 }
 
 func (b *Board) SetBomb(pos shared.Position) {
-	b.cells[pos.Y][pos.X] = NewCell(true)
+	b.setCellAt(pos, NewCell(true))
 }
 
 func (b *Board) OpenCell(pos shared.Position) error {
 	if !b.inBoard(pos) {
 		return fmt.Errorf("不正な範囲が選択されました. 有効なrowは[0-%d], columnは[0-%d]です", b.width-1, b.width-1)
 	}
-	openedCell, err := b.cells[pos.Y][pos.X].Open()
+	openedCell, err := b.GetCellAt(pos).Open()
 	if err != nil {
 		return err
 	}
-	b.cells[pos.Y][pos.X] = openedCell
+	b.setCellAt(pos, openedCell)
 	b.closedCellCount--
 	return nil
 }
@@ -53,8 +55,10 @@ func (b *Board) inBoard(pos shared.Position) bool {
 }
 
 func (b *Board) IncrementBombCount(pos shared.Position) (err error) {
-	if b.cells[pos.Y][pos.X], err = b.cells[pos.Y][pos.X].IncrementBombCount(); err != nil {
+	newCell, err := b.GetCellAt(pos).IncrementBombCount()
+	if err != nil {
 		return err
 	}
+	b.setCellAt(pos, newCell)
 	return nil
 }
