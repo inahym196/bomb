@@ -10,6 +10,7 @@ import (
 	"github.com/MakeNowJust/heredoc"
 	"github.com/inahym196/bomb/internal/domain"
 	"github.com/inahym196/bomb/internal/interactor"
+	"github.com/inahym196/bomb/pkg/shared"
 )
 
 type CLIController struct {
@@ -75,7 +76,8 @@ func (c *CLIController) Run() {
 				fmt.Println(err.Error())
 				continue
 			}
-			result, err := c.gi.OpenCell(interactor.OpenCellParam{Row: row, Col: col})
+			param := interactor.OpenCellParam{Pos: shared.NewPosition(col, row)}
+			result, err := c.gi.OpenCell(param)
 			if err != nil {
 				fmt.Println(err.Error())
 				continue

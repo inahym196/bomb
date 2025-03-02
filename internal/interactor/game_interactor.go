@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/inahym196/bomb/internal/domain"
+	"github.com/inahym196/bomb/pkg/shared"
 )
 
 var ImmemoryGame *domain.Game
@@ -71,8 +72,7 @@ func (gi *GameInteractor) GetGame() (GetGameResult, error) {
 }
 
 type OpenCellParam struct {
-	Row int
-	Col int
+	Pos shared.Position
 }
 
 type OpenCellResult struct {
@@ -84,11 +84,11 @@ func (gi *GameInteractor) OpenCell(param OpenCellParam) (OpenCellResult, error) 
 	if !ok {
 		return OpenCellResult{}, fmt.Errorf("ゲームが初期化されていません")
 	}
-	err := game.OpenCell(param.Row, param.Col)
+	err := game.OpenCell(param.Pos)
 	if err != nil {
 		return OpenCellResult{}, err
 	}
-	game.UpdateState(param.Row, param.Col)
+	game.UpdateState(param.Pos)
 	if err := gi.game_repo.Save(game); err != nil {
 		return OpenCellResult{}, err
 	}
