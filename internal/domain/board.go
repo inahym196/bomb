@@ -47,9 +47,9 @@ type Board struct {
 	closedCellCount int
 }
 
-func (b *Board) GetCells() [][]Cell              { return b.cells }
-func (b *Board) GetCellAt(x, y int) Cell         { return b.cells[y][x] }
-func (b *Board) GetClosedCellCount() (count int) { return b.closedCellCount }
+func (b *Board) GetCells() [][]Cell                 { return b.cells }
+func (b *Board) GetCellAt(pos shared.Position) Cell { return b.cells[pos.Y][pos.X] }
+func (b *Board) GetClosedCellCount() (count int)    { return b.closedCellCount }
 
 func NewBoard(width int) *Board {
 	return &Board{width, initCells(width), width * width}

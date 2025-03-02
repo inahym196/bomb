@@ -89,7 +89,7 @@ func (g *Game) UpdateState(pos shared.Position) {
 	switch {
 	case g.bombCount == g.board.GetClosedCellCount():
 		g.state = GameStateCompleted
-	case g.board.GetCellAt(pos.X, pos.Y).IsBomb():
+	case g.board.GetCellAt(pos).IsBomb():
 		g.state = GameStateFailed
 	case g.state == GameStateReady:
 		g.state = GameStatePlaying
