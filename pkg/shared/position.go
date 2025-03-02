@@ -1,6 +1,8 @@
 package shared
 
-import "math/rand"
+import (
+	"math/rand"
+)
 
 type Position struct {
 	X int
@@ -21,7 +23,7 @@ var Directions = []struct{ dx, dy int }{
 	{1, -1}, {1, 0}, {1, 1},
 }
 
-func (p Position) ForEachDirection(fn func(Position)) {
+func (p Position) ForEachDirection(fn func(pos Position)) {
 	for _, dir := range Directions {
 		neighbor := p.offset(dir.dx, dir.dy)
 		fn(neighbor)

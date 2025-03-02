@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"container/list"
 	"fmt"
 
 	"github.com/inahym196/bomb/pkg/shared"
@@ -12,9 +13,15 @@ type Board struct {
 	closedCellCount int
 }
 
-func (b *Board) GetCells() [][]Cell                 { return b.cells }
-func (b *Board) GetCellAt(pos shared.Position) Cell { return b.cells[pos.Y][pos.X] }
-func (b *Board) GetClosedCellCount() (count int)    { return b.closedCellCount }
+func (b *Board) GetCells() [][]Cell                     { return b.cells }
+func (b *Board) MustGetCellAt(pos shared.Position) Cell { return b.cells[pos.Y][pos.X] }
+func (b *Board) GetClosedCellCount() (count int)        { return b.closedCellCount }
+func (b *Board) GetCellAt(pos shared.Position) (Cell, error) {
+	if !b.inBoard(pos) {
+		return NewCell(false), fmt.Errorf("不正な範囲が選択されました. 有効なrowは[0-%d], columnは[0-%d]です", b.width-1, b.width-1)
+	}
+	return b.cells[pos.Y][pos.X], nil
+}
 
 func (b *Board) setCellAt(pos shared.Position, cell Cell) { b.cells[pos.Y][pos.X] = cell }
 
@@ -38,16 +45,45 @@ func (b *Board) SetBomb(pos shared.Position) {
 }
 
 func (b *Board) OpenCell(pos shared.Position) error {
-	if !b.inBoard(pos) {
-		return fmt.Errorf("不正な範囲が選択されました. 有効なrowは[0-%d], columnは[0-%d]です", b.width-1, b.width-1)
+	cell, err := b.GetCellAt(pos)
+	if err != nil {
+		return err
 	}
-	openedCell, err := b.GetCellAt(pos).Open()
+	openedCell, err := cell.Open()
 	if err != nil {
 		return err
 	}
 	b.setCellAt(pos, openedCell)
 	b.closedCellCount--
+	b.expandOpenArea(pos)
 	return nil
+}
+
+func (b *Board) expandOpenArea(pos shared.Position) {
+	visited := map[shared.Position]bool{}
+	queue := list.New()
+	queue.PushBack(pos)
+	for queue.Len() > 0 {
+		front := queue.Front()
+		queue.Remove(front)
+		pos := front.Value.(shared.Position)
+		cell, err := b.GetCellAt(pos)
+		if err != nil {
+			continue
+		}
+		visited[pos] = true
+		if openedCell, err := cell.Open(); err == nil {
+			b.setCellAt(pos, openedCell)
+			b.closedCellCount--
+		}
+		if cell.bombCount == 0 {
+			pos.ForEachDirection(func(p shared.Position) {
+				if b.inBoard(p) && !visited[p] && !b.MustGetCellAt(p).IsOpened() {
+					queue.PushBack(p)
+				}
+			})
+		}
+	}
 }
 
 func (b *Board) inBoard(pos shared.Position) bool {
@@ -55,7 +91,11 @@ func (b *Board) inBoard(pos shared.Position) bool {
 }
 
 func (b *Board) IncrementBombCount(pos shared.Position) (err error) {
-	newCell, err := b.GetCellAt(pos).IncrementBombCount()
+	cell, err := b.GetCellAt(pos)
+	if err != nil {
+		return err
+	}
+	newCell, err := cell.IncrementBombCount()
 	if err != nil {
 		return err
 	}
