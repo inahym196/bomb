@@ -48,20 +48,15 @@ func (c *CLIController) Run() {
 				fmt.Println(err.Error())
 				continue
 			}
+			fmt.Printf("gameState: %s\n", stateToStr(result.State))
 			fmt.Println(c.parseGame(result.GameDTO))
-		case "info":
-			game, err := c.gi.GetGame()
-			if err != nil {
-				fmt.Println(err.Error())
-				continue
-			}
-			fmt.Printf("gameState: %s\n", stateToStr(game.State))
 		case "show":
 			result, err := c.gi.GetGame()
 			if err != nil {
 				fmt.Println(err.Error())
 				continue
 			}
+			fmt.Printf("gameState: %s\n", stateToStr(result.State))
 			fmt.Println(c.parseGame(result.GameDTO))
 		case "debug":
 			result, err := c.gi.GetGame()
@@ -69,6 +64,7 @@ func (c *CLIController) Run() {
 				fmt.Println(err.Error())
 				continue
 			}
+			fmt.Printf("gameState: %s\n", stateToStr(result.State))
 			fmt.Println(c.debugGame(result.GameDTO))
 		case "open":
 			row, col, err := c.parseOpenArgs(words)
@@ -82,6 +78,7 @@ func (c *CLIController) Run() {
 				fmt.Println(err.Error())
 				continue
 			}
+			fmt.Printf("gameState: %s\n", stateToStr(result.State))
 			fmt.Println(c.parseGame(result.GameDTO))
 		case "exit", "quit", "q":
 			fmt.Println("終了中...")
