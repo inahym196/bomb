@@ -5,22 +5,12 @@ import (
 	"github.com/inahym196/bomb/pkg/shared"
 )
 
-type bombScope struct {
-	origin      *OpenCell
-	closedCells []ClosedCell
-}
-
-func NewBombScope(*OpenCell) *bombScope {
-	// TODO
-	return &bombScope{nil, []ClosedCell{}}
-}
-
 type ClosedCell struct {
-	scopedBy []bombScope
+	referencedBy []*OpenCell
 }
 
 type OpenCell struct {
-	bombScope *bombScope
+	refs []*ClosedCell
 	//isSolved  bool
 	bombCount int
 }
