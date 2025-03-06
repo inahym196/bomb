@@ -78,7 +78,7 @@ func (b *Board) expandOpenArea(pos shared.Position) {
 			b.closedCellCount--
 		}
 		if cell.bombCount == 0 {
-			pos.ForEachDirection(func(p shared.Position) {
+			pos.ForEachNeighbor(func(p shared.Position) {
 				if b.inBoard(p) && !visited[p] && !b.MustGetCellAt(p).IsOpened() {
 					queue.PushBack(p)
 				}

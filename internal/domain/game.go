@@ -76,7 +76,7 @@ func (g *Game) newRandomPositions(except shared.Position) []shared.Position {
 
 func (g *Game) incrementBombCountArroundBomb(pos shared.Position, incrementFunc func(pos shared.Position) error) {
 	cells := g.board.GetCells()
-	pos.ForEachDirection(func(p shared.Position) {
+	pos.ForEachNeighbor(func(p shared.Position) {
 		if g.board.inBoard(p) && !cells[p.Y][p.X].IsBomb() {
 			incrementFunc(p)
 		}
