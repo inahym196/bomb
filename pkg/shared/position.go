@@ -17,19 +17,29 @@ func NewRandomPosition(maxN int) Position {
 	return Position{rand.Intn(maxN), rand.Intn(maxN)}
 }
 
-var Directions = []struct{ dx, dy int }{
+var neighbors = []struct{ dx, dy int }{
 	{-1, -1}, {-1, 0}, {-1, 1},
 	{0, -1}, {0, 1},
 	{1, -1}, {1, 0}, {1, 1},
 }
 
-func (p Position) ForEachDirection(fn func(pos Position)) {
-	for _, dir := range Directions {
-		neighbor := p.offset(dir.dx, dir.dy)
+func (p Position) ForEachNeighbor(fn func(pos Position)) {
+	for _, neighbor := range neighbors {
+		neighbor := p.offset(neighbor.dx, neighbor.dy)
 		fn(neighbor)
 	}
 }
 
 func (p Position) offset(dx, dy int) Position {
 	return Position{p.X + dx, p.Y + dy}
+}
+
+func (p Position) ForEachNeighborSatisfy(fn func(pos Position) (ok bool)) bool {
+	for _, dir := range neighbors {
+		neighbor := p.offset(dir.dx, dir.dy)
+		if !fn(neighbor) {
+			return false
+		}
+	}
+	return true
 }
