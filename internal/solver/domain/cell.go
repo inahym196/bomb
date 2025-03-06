@@ -41,7 +41,7 @@ func NewOpenCell(cells [][]interactor.CellDTO, pos shared.Position) OpenCell {
 // -> そのうちCell.Checkedとか実装したら活きてくる。実装してからコメントを外す
 //func isSolvedCell(cells [][]interactor.CellDTO, pos shared.Position) bool {
 //	// 周りのセルのうち、Cells内に含まれているセルが全てOpenの場合はSolved
-//	return pos.ForEachDirectionSatisfy(func(pos shared.Position) (ok bool) {
+//	return pos.ForEachNeighborSatisfy(func(pos shared.Position) (ok bool) {
 //		// posがCells内に含まれない場合はSolveに関係ないためok判定
 //		return !isInCells(cells, pos) || cells[pos.Y][pos.X].IsOpened
 //	})
