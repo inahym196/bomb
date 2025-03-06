@@ -10,16 +10,19 @@ import (
 	"github.com/MakeNowJust/heredoc"
 	"github.com/inahym196/bomb/internal/domain"
 	"github.com/inahym196/bomb/internal/interactor"
+	si "github.com/inahym196/bomb/internal/solver/interactor"
 	"github.com/inahym196/bomb/pkg/shared"
 )
 
 type CLIController struct {
 	gi *interactor.GameInteractor
+	si *si.GameSolverInteractor
 }
 
 func NewCLIController() *CLIController {
 	return &CLIController{
 		gi: interactor.NewGameInteractor(),
+		si: si.NewGameSolverInteractor(),
 	}
 }
 
@@ -66,6 +69,14 @@ func (c *CLIController) Run() {
 			}
 			fmt.Printf("gameState: %s\n", stateToStr(result.State))
 			fmt.Println(c.debugGame(result.GameDTO))
+		case "hint":
+			result, err := c.gi.GetGame()
+			if err != nil {
+				fmt.Println(err.Error())
+				continue
+			}
+			param := si.GetHintParam{Cells: result.GameDTO.BoardCells}
+			fmt.Println(c.si.GetHint(param))
 		case "open":
 			row, col, err := c.parseOpenArgs(words)
 			if err != nil {

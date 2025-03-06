@@ -16,10 +16,9 @@ const (
 )
 
 type Game struct {
-	state      byte
-	board      *Board
-	boardWidth int
-	bombCount  int
+	state     byte
+	board     *Board
+	bombCount int
 }
 
 func (g *Game) GetBoard() *Board { return g.board }
@@ -34,10 +33,9 @@ func NewGame(boardWidth, bombCount int) (*Game, error) {
 		return nil, fmt.Errorf("boardWidthが%dの時、bombCountは%d以下を指定してください", boardWidth, maxBombCount)
 	}
 	return &Game{
-		state:      GameStateReady,
-		board:      NewBoard(boardWidth),
-		boardWidth: boardWidth,
-		bombCount:  bombCount,
+		state:     GameStateReady,
+		board:     NewBoard(boardWidth),
+		bombCount: bombCount,
 	}, nil
 }
 
@@ -65,7 +63,7 @@ func (g *Game) setRandomBombs(except shared.Position) {
 
 func (g *Game) newRandomPositions(except shared.Position) []shared.Position {
 	n := g.bombCount
-	maxN := g.boardWidth
+	maxN := g.GetBoard().GetWidth()
 	var poss []shared.Position
 	for len(poss) != n {
 		pos := shared.NewRandomPosition(maxN)
@@ -78,7 +76,7 @@ func (g *Game) newRandomPositions(except shared.Position) []shared.Position {
 
 func (g *Game) incrementBombCountArroundBomb(pos shared.Position, incrementFunc func(pos shared.Position) error) {
 	cells := g.board.GetCells()
-	pos.ForEachDirection(func(p shared.Position) {
+	pos.ForEachNeighbor(func(p shared.Position) {
 		if g.board.inBoard(p) && !cells[p.Y][p.X].IsBomb() {
 			incrementFunc(p)
 		}

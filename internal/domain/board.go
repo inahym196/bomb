@@ -14,6 +14,7 @@ type Board struct {
 }
 
 func (b *Board) GetCells() [][]Cell                     { return b.cells }
+func (b *Board) GetWidth() int                          { return b.width }
 func (b *Board) MustGetCellAt(pos shared.Position) Cell { return b.cells[pos.Y][pos.X] }
 func (b *Board) GetClosedCellCount() (count int)        { return b.closedCellCount }
 func (b *Board) GetCellAt(pos shared.Position) (Cell, error) {
@@ -77,7 +78,7 @@ func (b *Board) expandOpenArea(pos shared.Position) {
 			b.closedCellCount--
 		}
 		if cell.bombCount == 0 {
-			pos.ForEachDirection(func(p shared.Position) {
+			pos.ForEachNeighbor(func(p shared.Position) {
 				if b.inBoard(p) && !visited[p] && !b.MustGetCellAt(p).IsOpened() {
 					queue.PushBack(p)
 				}
