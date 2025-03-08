@@ -88,7 +88,6 @@ func (gi *GameInteractor) OpenCell(param OpenCellParam) (OpenCellResult, error) 
 	if err != nil {
 		return OpenCellResult{}, err
 	}
-	game.UpdateState(param.Pos)
 	if err := gi.game_repo.Save(game); err != nil {
 		return OpenCellResult{}, err
 	}
