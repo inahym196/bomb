@@ -57,6 +57,9 @@ func (b *Board) SetBombs(positions map[shared.Position]struct{}) error {
 
 func (b *Board) incrementBombCountArroundBomb(pos shared.Position) {
 	pos.ForEachNeighbor(func(p shared.Position) {
+		if !b.contains(p) {
+			return
+		}
 		cell, err := b.GetCellAt(p)
 		if err == nil && !cell.IsBomb() {
 			b.incrementBombCount(p)
