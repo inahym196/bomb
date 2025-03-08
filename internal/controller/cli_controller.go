@@ -90,6 +90,34 @@ func (c *CLIController) Run() {
 			}
 			fmt.Printf("gameState: %s\n", stateToStr(result.State))
 			fmt.Println(c.parseGame(result.GameDTO))
+		case "check":
+			row, col, err := c.parseCheckArgs(words)
+			if err != nil {
+				fmt.Println(err.Error())
+				continue
+			}
+			param := interactor.CheckCellParam{Pos: shared.NewPosition(col, row)}
+			result, err := c.gi.CheckCell(param)
+			if err != nil {
+				fmt.Println(err.Error())
+				continue
+			}
+			fmt.Printf("gameState: %s\n", stateToStr(result.State))
+			fmt.Println(c.parseGame(result.GameDTO))
+		case "uncheck":
+			row, col, err := c.parseUnCheckArgs(words)
+			if err != nil {
+				fmt.Println(err.Error())
+				continue
+			}
+			param := interactor.UnCheckCellParam{Pos: shared.NewPosition(col, row)}
+			result, err := c.gi.UnCheckCell(param)
+			if err != nil {
+				fmt.Println(err.Error())
+				continue
+			}
+			fmt.Printf("gameState: %s\n", stateToStr(result.State))
+			fmt.Println(c.parseGame(result.GameDTO))
 		case "exit", "quit", "q":
 			fmt.Println("終了中...")
 			return
@@ -109,8 +137,12 @@ func (c *CLIController) Run() {
 }
 
 func (c *CLIController) parseGame(game interactor.GameDTO) (output string) {
-	for _, row := range game.BoardCells {
-		for _, cell := range row {
+	for i, row := range game.BoardCells {
+		for j, cell := range row {
+			if _, ok := game.CheckedCellMap[shared.NewPosition(j, i)]; ok {
+				output += " x︎"
+				continue
+			}
 			output += fmt.Sprintf(" %s", cellToStr(cell))
 		}
 		output += "\n"

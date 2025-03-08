@@ -2,6 +2,7 @@ package interactor
 
 import (
 	"github.com/inahym196/bomb/internal/domain"
+	"github.com/inahym196/bomb/pkg/shared"
 )
 
 type CellDTO struct {
@@ -11,12 +12,13 @@ type CellDTO struct {
 }
 
 type GameDTO struct {
-	BoardCells [][]CellDTO
-	State      byte
+	BoardCells     [][]CellDTO
+	State          byte
+	CheckedCellMap map[shared.Position]struct{}
 }
 
 func toGameDTO(game *domain.Game) GameDTO {
-	return GameDTO{cellsFrom(game.GetBoard().GetCells()), game.GetState()}
+	return GameDTO{cellsFrom(game.GetBoard().GetCells()), game.GetState(), game.GetBoard().GetCheckedCellMap()}
 }
 
 func cellsFrom(cells [][]domain.Cell) [][]CellDTO {

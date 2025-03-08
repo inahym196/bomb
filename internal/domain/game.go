@@ -51,7 +51,12 @@ func (g *Game) OpenCell(pos shared.Position) error {
 	if err != nil {
 		return err
 	}
-	g.updateState(pos)
+	if g.board.MustGetCellAt(pos).IsBomb() {
+		g.state = GameStateFailed
+	}
+	if g.bombCount == g.board.GetClosedCellCount() {
+		g.state = GameStateCompleted
+	}
 	return nil
 }
 
@@ -89,11 +94,20 @@ func (g *Game) incrementBombCountArroundBomb(pos shared.Position, incrementFunc 
 	})
 }
 
-func (g *Game) updateState(pos shared.Position) {
-	switch {
-	case g.bombCount == g.board.GetClosedCellCount():
-		g.state = GameStateCompleted
-	case g.board.MustGetCellAt(pos).IsBomb():
-		g.state = GameStateFailed
+func (g *Game) CheckCell(pos shared.Position) error {
+	if g.isFinished() {
+		return fmt.Errorf("ゲームはすでに終了しています")
 	}
+	return g.board.CheckCell(pos)
+}
+
+func (g *Game) UnCheckCell(pos shared.Position) error {
+	if g.isFinished() {
+		return fmt.Errorf("ゲームはすでに終了しています")
+	}
+	err := g.board.UnCheckCell(pos)
+	if err != nil {
+		return err
+	}
+	return nil
 }
