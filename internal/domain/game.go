@@ -42,7 +42,8 @@ func (g *Game) OpenCell(pos shared.Position) error {
 		return fmt.Errorf("ゲームはすでに終了しています")
 	}
 	if g.state == GameStateReady {
-		g.board.SetRandomBombs(pos, g.bombCount)
+		bombPositions := shared.NewUniqueRandomPositionsWithout(g.bombCount, g.board.GetWidth(), pos)
+		g.board.SetBombs(bombPositions)
 		g.state = GameStatePlaying
 	}
 	err := g.board.OpenCell(pos)
