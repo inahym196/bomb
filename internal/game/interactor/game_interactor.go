@@ -3,7 +3,7 @@ package interactor
 import (
 	"fmt"
 
-	"github.com/inahym196/bomb/internal/domain"
+	"github.com/inahym196/bomb/internal/game/domain"
 	"github.com/inahym196/bomb/pkg/shared"
 )
 

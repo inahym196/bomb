@@ -4,7 +4,7 @@ import (
 	"maps"
 	"slices"
 
-	"github.com/inahym196/bomb/internal/interactor"
+	"github.com/inahym196/bomb/internal/game/interactor"
 	"github.com/inahym196/bomb/pkg/shared"
 )
 

@@ -1,7 +1,7 @@
 package interactor
 
 import (
-	"github.com/inahym196/bomb/internal/interactor"
+	"github.com/inahym196/bomb/internal/game/interactor"
 	"github.com/inahym196/bomb/internal/solver/domain"
 )
 

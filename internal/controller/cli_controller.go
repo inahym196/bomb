@@ -7,8 +7,8 @@ import (
 	"strings"
 
 	"github.com/MakeNowJust/heredoc"
-	"github.com/inahym196/bomb/internal/domain"
-	"github.com/inahym196/bomb/internal/interactor"
+	"github.com/inahym196/bomb/internal/game/domain"
+	"github.com/inahym196/bomb/internal/game/interactor"
 	si "github.com/inahym196/bomb/internal/solver/interactor"
 	"github.com/inahym196/bomb/pkg/shared"
 )
