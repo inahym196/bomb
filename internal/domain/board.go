@@ -3,8 +3,7 @@ package domain
 import (
 	"container/list"
 	"fmt"
-	"reflect"
-	"slices"
+	"maps"
 
 	"github.com/inahym196/bomb/pkg/shared"
 )
@@ -49,25 +48,15 @@ func (b *Board) SetBomb(pos shared.Position) {
 	b.setCellAt(pos, NewCell(true))
 }
 
-func (b *Board) SetRandomBombs(except shared.Position, bombCount int) {
-	poss := b.newRandomPositions(except, bombCount)
-	for _, pos := range poss {
-		b.SetBomb(pos)
+func (b *Board) SetBombs(positions map[shared.Position]struct{}) error {
+	for pos := range maps.Keys(positions) {
+		if !b.inBoard(pos) {
+			return fmt.Errorf("ボード外のポジションは指定できません")
+		}
+		b.setCellAt(pos, NewCell(true))
 		b.incrementBombCountArroundBomb(pos, b.IncrementBombCount)
 	}
-}
-
-func (b *Board) newRandomPositions(except shared.Position, bombCount int) []shared.Position {
-	n := bombCount
-	maxN := b.width
-	var poss []shared.Position
-	for len(poss) != n {
-		pos := shared.NewRandomPosition(maxN)
-		if !reflect.DeepEqual(pos, except) && !slices.Contains(poss, pos) {
-			poss = append(poss, pos)
-		}
-	}
-	return poss
+	return nil
 }
 
 func (b *Board) incrementBombCountArroundBomb(pos shared.Position, incrementFunc func(pos shared.Position) error) {
