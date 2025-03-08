@@ -50,7 +50,7 @@ func (g *Game) OpenCell(pos shared.Position) error {
 	if err != nil {
 		return err
 	}
-	if g.board.MustGetCellAt(pos).IsBomb() {
+	if cell, _ := g.board.GetCellAt(pos); cell.IsBomb() {
 		g.state = GameStateFailed
 	}
 	if g.bombCount == g.board.GetClosedCellCount() {

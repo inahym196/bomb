@@ -17,7 +17,6 @@ type Board struct {
 
 func (b *Board) GetWidth() int                                   { return b.width }
 func (b *Board) GetCells() [][]Cell                              { return b.cells }
-func (b *Board) MustGetCellAt(pos shared.Position) Cell          { return b.cells[pos.Y][pos.X] }
 func (b *Board) GetClosedCellCount() (count int)                 { return b.closedCellCount }
 func (b *Board) GetCheckedCellMap() map[shared.Position]struct{} { return b.checkedCellMap }
 
@@ -104,7 +103,8 @@ func (b *Board) expandOpenArea(pos shared.Position) {
 		}
 		if cell.bombCount == 0 {
 			pos.ForEachNeighbor(func(p shared.Position) {
-				if b.contains(p) && !visited[p] && !b.MustGetCellAt(p).IsOpened() {
+				cell, err := b.GetCellAt(p)
+				if err == nil && !visited[p] && !cell.IsOpened() {
 					queue.PushBack(p)
 				}
 			})
