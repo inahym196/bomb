@@ -3,6 +3,8 @@ package domain
 import (
 	"container/list"
 	"fmt"
+	"reflect"
+	"slices"
 
 	"github.com/inahym196/bomb/pkg/shared"
 )
@@ -45,6 +47,35 @@ func initCells(width int) [][]Cell {
 
 func (b *Board) SetBomb(pos shared.Position) {
 	b.setCellAt(pos, NewCell(true))
+}
+
+func (b *Board) SetRandomBombs(except shared.Position, bombCount int) {
+	poss := b.newRandomPositions(except, bombCount)
+	for _, pos := range poss {
+		b.SetBomb(pos)
+		b.incrementBombCountArroundBomb(pos, b.IncrementBombCount)
+	}
+}
+
+func (b *Board) newRandomPositions(except shared.Position, bombCount int) []shared.Position {
+	n := bombCount
+	maxN := b.width
+	var poss []shared.Position
+	for len(poss) != n {
+		pos := shared.NewRandomPosition(maxN)
+		if !reflect.DeepEqual(pos, except) && !slices.Contains(poss, pos) {
+			poss = append(poss, pos)
+		}
+	}
+	return poss
+}
+
+func (b *Board) incrementBombCountArroundBomb(pos shared.Position, incrementFunc func(pos shared.Position) error) {
+	pos.ForEachNeighbor(func(p shared.Position) {
+		if b.inBoard(p) && !b.cells[p.Y][p.X].IsBomb() {
+			incrementFunc(p)
+		}
+	})
 }
 
 func (b *Board) OpenCell(pos shared.Position) error {
