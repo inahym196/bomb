@@ -9,6 +9,10 @@ type Position struct {
 	Y int
 }
 
+func (pos Position) IsInside(maxX, maxY int) bool {
+	return 0 <= pos.Y && pos.Y < maxY && 0 <= pos.X && pos.X < maxX
+}
+
 func NewPosition(x, y int) Position {
 	return Position{x, y}
 }
