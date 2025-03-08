@@ -34,3 +34,33 @@ func (c *CLIController) parseOpenArgs(words []string) (row, col int, err error) 
 	}
 	return row, col, nil
 }
+
+func (c *CLIController) parseCheckArgs(words []string) (row, col int, err error) {
+	if len(words) != 3 {
+		return 0, 0, fmt.Errorf("引数の数が不正です. \"help\"コマンドを確認してください")
+	}
+	row, err = strconv.Atoi(words[1])
+	if err != nil {
+		return 0, 0, fmt.Errorf("rowの値が不正です. 数字を入力してください")
+	}
+	col, err = strconv.Atoi(words[2])
+	if err != nil {
+		return 0, 0, fmt.Errorf("columnの値が不正です. 数字を入力してください")
+	}
+	return row, col, nil
+}
+
+func (c *CLIController) parseUnCheckArgs(words []string) (row, col int, err error) {
+	if len(words) != 3 {
+		return 0, 0, fmt.Errorf("引数の数が不正です. \"help\"コマンドを確認してください")
+	}
+	row, err = strconv.Atoi(words[1])
+	if err != nil {
+		return 0, 0, fmt.Errorf("rowの値が不正です. 数字を入力してください")
+	}
+	col, err = strconv.Atoi(words[2])
+	if err != nil {
+		return 0, 0, fmt.Errorf("columnの値が不正です. 数字を入力してください")
+	}
+	return row, col, nil
+}

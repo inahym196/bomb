@@ -93,3 +93,49 @@ func (gi *GameInteractor) OpenCell(param OpenCellParam) (OpenCellResult, error) 
 	}
 	return OpenCellResult{toGameDTO(game)}, nil
 }
+
+type CheckCellParam struct {
+	Pos shared.Position
+}
+
+type CheckCellResult struct {
+	GameDTO
+}
+
+func (gi *GameInteractor) CheckCell(param CheckCellParam) (CheckCellResult, error) {
+	game, ok := gi.game_repo.Find()
+	if !ok {
+		return CheckCellResult{}, fmt.Errorf("ゲームが初期化されていません")
+	}
+	err := game.CheckCell(param.Pos)
+	if err != nil {
+		return CheckCellResult{}, err
+	}
+	if err := gi.game_repo.Save(game); err != nil {
+		return CheckCellResult{}, err
+	}
+	return CheckCellResult{toGameDTO(game)}, nil
+}
+
+type UnCheckCellParam struct {
+	Pos shared.Position
+}
+
+type UnCheckCellResult struct {
+	GameDTO
+}
+
+func (gi *GameInteractor) UnCheckCell(param UnCheckCellParam) (UnCheckCellResult, error) {
+	game, ok := gi.game_repo.Find()
+	if !ok {
+		return UnCheckCellResult{}, fmt.Errorf("ゲームが初期化されていません")
+	}
+	err := game.UnCheckCell(param.Pos)
+	if err != nil {
+		return UnCheckCellResult{}, err
+	}
+	if err := gi.game_repo.Save(game); err != nil {
+		return UnCheckCellResult{}, err
+	}
+	return UnCheckCellResult{toGameDTO(game)}, nil
+}

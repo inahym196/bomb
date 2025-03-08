@@ -11,12 +11,14 @@ type Board struct {
 	width           int
 	cells           [][]Cell
 	closedCellCount int
+	checkedCellMap  map[shared.Position]struct{}
 }
 
-func (b *Board) GetCells() [][]Cell                     { return b.cells }
-func (b *Board) GetWidth() int                          { return b.width }
-func (b *Board) MustGetCellAt(pos shared.Position) Cell { return b.cells[pos.Y][pos.X] }
-func (b *Board) GetClosedCellCount() (count int)        { return b.closedCellCount }
+func (b *Board) GetCells() [][]Cell                              { return b.cells }
+func (b *Board) GetWidth() int                                   { return b.width }
+func (b *Board) MustGetCellAt(pos shared.Position) Cell          { return b.cells[pos.Y][pos.X] }
+func (b *Board) GetClosedCellCount() (count int)                 { return b.closedCellCount }
+func (b *Board) GetCheckedCellMap() map[shared.Position]struct{} { return b.checkedCellMap }
 func (b *Board) GetCellAt(pos shared.Position) (Cell, error) {
 	if !b.inBoard(pos) {
 		return NewCell(false), fmt.Errorf("不正な範囲が選択されました. 有効なrowは[0-%d], columnは[0-%d]です", b.width-1, b.width-1)
@@ -27,7 +29,7 @@ func (b *Board) GetCellAt(pos shared.Position) (Cell, error) {
 func (b *Board) setCellAt(pos shared.Position, cell Cell) { b.cells[pos.Y][pos.X] = cell }
 
 func NewBoard(width int) *Board {
-	return &Board{width, initCells(width), width * width}
+	return &Board{width, initCells(width), width * width, map[shared.Position]struct{}{}}
 }
 
 func initCells(width int) [][]Cell {
@@ -101,5 +103,29 @@ func (b *Board) IncrementBombCount(pos shared.Position) (err error) {
 		return err
 	}
 	b.setCellAt(pos, newCell)
+	return nil
+}
+
+func (b *Board) CheckCell(pos shared.Position) error {
+	cell, err := b.GetCellAt(pos)
+	if err != nil {
+		return err
+	}
+	if cell.isOpened {
+		return fmt.Errorf("開放済みのセルです")
+	}
+	b.checkedCellMap[pos] = struct{}{}
+	return nil
+}
+
+func (b *Board) UnCheckCell(pos shared.Position) error {
+	cell, err := b.GetCellAt(pos)
+	if err != nil {
+		return err
+	}
+	if cell.isOpened {
+		return fmt.Errorf("開放済みのセルです")
+	}
+	delete(b.checkedCellMap, pos)
 	return nil
 }
