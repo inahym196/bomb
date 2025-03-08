@@ -37,10 +37,22 @@ func (c *CLIController) Run() {
 		}
 		switch words[0] {
 		case "start", "restart", "init":
-			boardWidth, bombCount, err := c.parseStartArgs(words)
+			var boardWidth, bombCount int
+			mode, err := c.parseStartGameModeArgs(words)
 			if err != nil {
 				fmt.Println(err.Error())
 				continue
+			}
+			switch mode {
+			case GameModeEasy:
+				boardWidth, bombCount = 9, 10
+			case GameModeNormal:
+				boardWidth, bombCount = 16, 40
+			case GameModeCustom:
+				boardWidth, bombCount, err = c.parseStartCustomModeArgs(words)
+				if err != nil {
+					fmt.Println(err.Error())
+				}
 			}
 			result, err := c.gi.InitGame(interactor.InitGameParam{
 				BoardWidth: boardWidth,
@@ -124,11 +136,12 @@ func (c *CLIController) Run() {
 		case "help", "h":
 			fmt.Println(heredoc.Doc(`
 			Available Commands:
-			  > start <boardWidth> <bombCount>  Start Game
-			  > show                            Show board
-			  > open <row> <col>                Open cell
-			  > help                            Show this help message
-			  > exit                            Exit the program
+			  > start <mode: easy or normal>        Start Game, Select gameMode
+			  > start custom <width> <bombCount>    Start Game, Set Custom width and bombCount
+			  > show                                Show board
+			  > open <row> <col>                    Open cell
+			  > help                                Show this help message
+			  > exit                                Exit the program
 			`))
 		default:
 			fmt.Printf("\"%s\"は無効なコマンドです. \"help\"コマンドを確認してください\n\n", text)
