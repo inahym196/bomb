@@ -15,13 +15,16 @@ type Board struct {
 	checkedCellMap  map[shared.Position]struct{}
 }
 
-func (b *Board) GetCells() [][]Cell                              { return b.cells }
 func (b *Board) GetWidth() int                                   { return b.width }
+func (b *Board) GetCells() [][]Cell                              { return b.cells }
 func (b *Board) MustGetCellAt(pos shared.Position) Cell          { return b.cells[pos.Y][pos.X] }
 func (b *Board) GetClosedCellCount() (count int)                 { return b.closedCellCount }
 func (b *Board) GetCheckedCellMap() map[shared.Position]struct{} { return b.checkedCellMap }
+
+func (b *Board) contains(pos shared.Position) bool { return pos.IsInside(b.width, b.width) }
+
 func (b *Board) GetCellAt(pos shared.Position) (Cell, error) {
-	if !b.inBoard(pos) {
+	if !b.contains(pos) {
 		return NewCell(false), fmt.Errorf("不正な範囲が選択されました. 有効なrowは[0-%d], columnは[0-%d]です", b.width-1, b.width-1)
 	}
 	return b.cells[pos.Y][pos.X], nil
@@ -50,7 +53,7 @@ func (b *Board) SetBomb(pos shared.Position) {
 
 func (b *Board) SetBombs(positions map[shared.Position]struct{}) error {
 	for pos := range maps.Keys(positions) {
-		if !b.inBoard(pos) {
+		if !b.contains(pos) {
 			return fmt.Errorf("ボード外のポジションは指定できません")
 		}
 		b.setCellAt(pos, NewCell(true))
@@ -61,7 +64,7 @@ func (b *Board) SetBombs(positions map[shared.Position]struct{}) error {
 
 func (b *Board) incrementBombCountArroundBomb(pos shared.Position, incrementFunc func(pos shared.Position) error) {
 	pos.ForEachNeighbor(func(p shared.Position) {
-		if b.inBoard(p) && !b.cells[p.Y][p.X].IsBomb() {
+		if b.contains(p) && !b.cells[p.Y][p.X].IsBomb() {
 			incrementFunc(p)
 		}
 	})
@@ -101,16 +104,12 @@ func (b *Board) expandOpenArea(pos shared.Position) {
 		}
 		if cell.bombCount == 0 {
 			pos.ForEachNeighbor(func(p shared.Position) {
-				if b.inBoard(p) && !visited[p] && !b.MustGetCellAt(p).IsOpened() {
+				if b.contains(p) && !visited[p] && !b.MustGetCellAt(p).IsOpened() {
 					queue.PushBack(p)
 				}
 			})
 		}
 	}
-}
-
-func (b *Board) inBoard(pos shared.Position) bool {
-	return 0 <= pos.Y && pos.Y < b.width && 0 <= pos.X && pos.X < b.width
 }
 
 func (b *Board) IncrementBombCount(pos shared.Position) (err error) {
