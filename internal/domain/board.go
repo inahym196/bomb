@@ -24,7 +24,7 @@ func (b *Board) contains(pos shared.Position) bool { return pos.IsInside(b.width
 
 func (b *Board) GetCellAt(pos shared.Position) (Cell, error) {
 	if !b.contains(pos) {
-		return NewCell(false), fmt.Errorf("不正な範囲が選択されました. 有効なrowは[0-%d], columnは[0-%d]です", b.width-1, b.width-1)
+		return NewCell(false), fmt.Errorf("不正なポジションが選択されました. 有効なrow, columnの範囲は[0-%d]です", b.width-1)
 	}
 	return b.cells[pos.Y][pos.X], nil
 }
@@ -46,27 +46,36 @@ func initCells(width int) [][]Cell {
 	return cells
 }
 
-func (b *Board) SetBomb(pos shared.Position) {
-	b.setCellAt(pos, NewCell(true))
-}
-
 func (b *Board) SetBombs(positions map[shared.Position]struct{}) error {
 	for pos := range maps.Keys(positions) {
 		if !b.contains(pos) {
 			return fmt.Errorf("ボード外のポジションは指定できません")
 		}
 		b.setCellAt(pos, NewCell(true))
-		b.incrementBombCountArroundBomb(pos, b.IncrementBombCount)
+		b.incrementBombCountArroundBomb(pos)
 	}
 	return nil
 }
 
-func (b *Board) incrementBombCountArroundBomb(pos shared.Position, incrementFunc func(pos shared.Position) error) {
+func (b *Board) incrementBombCountArroundBomb(pos shared.Position) {
 	pos.ForEachNeighbor(func(p shared.Position) {
 		if b.contains(p) && !b.cells[p.Y][p.X].IsBomb() {
-			incrementFunc(p)
+			b.incrementBombCount(p)
 		}
 	})
+}
+
+func (b *Board) incrementBombCount(pos shared.Position) (err error) {
+	cell, err := b.GetCellAt(pos)
+	if err != nil {
+		return err
+	}
+	newCell, err := cell.IncrementBombCount()
+	if err != nil {
+		return err
+	}
+	b.setCellAt(pos, newCell)
+	return nil
 }
 
 func (b *Board) OpenCell(pos shared.Position) error {
@@ -110,19 +119,6 @@ func (b *Board) expandOpenArea(pos shared.Position) {
 			})
 		}
 	}
-}
-
-func (b *Board) IncrementBombCount(pos shared.Position) (err error) {
-	cell, err := b.GetCellAt(pos)
-	if err != nil {
-		return err
-	}
-	newCell, err := cell.IncrementBombCount()
-	if err != nil {
-		return err
-	}
-	b.setCellAt(pos, newCell)
-	return nil
 }
 
 func (b *Board) CheckCell(pos shared.Position) error {
