@@ -45,8 +45,14 @@ func (g *Game) OpenCell(pos shared.Position) error {
 	}
 	if g.state == GameStateReady {
 		g.setRandomBombs(pos)
+		g.state = GameStatePlaying
 	}
-	return g.board.OpenCell(pos)
+	err := g.board.OpenCell(pos)
+	if err != nil {
+		return err
+	}
+	g.updateState(pos)
+	return nil
 }
 
 func (g *Game) isFinished() bool {
@@ -83,13 +89,11 @@ func (g *Game) incrementBombCountArroundBomb(pos shared.Position, incrementFunc 
 	})
 }
 
-func (g *Game) UpdateState(pos shared.Position) {
+func (g *Game) updateState(pos shared.Position) {
 	switch {
 	case g.bombCount == g.board.GetClosedCellCount():
 		g.state = GameStateCompleted
 	case g.board.MustGetCellAt(pos).IsBomb():
 		g.state = GameStateFailed
-	case g.state == GameStateReady:
-		g.state = GameStatePlaying
 	}
 }
