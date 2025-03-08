@@ -2,8 +2,6 @@ package domain
 
 import (
 	"fmt"
-	"reflect"
-	"slices"
 
 	"github.com/inahym196/bomb/pkg/shared"
 )
@@ -44,7 +42,7 @@ func (g *Game) OpenCell(pos shared.Position) error {
 		return fmt.Errorf("ゲームはすでに終了しています")
 	}
 	if g.state == GameStateReady {
-		g.setRandomBombs(pos)
+		g.board.SetRandomBombs(pos, g.bombCount)
 		g.state = GameStatePlaying
 	}
 	err := g.board.OpenCell(pos)
@@ -62,36 +60,6 @@ func (g *Game) OpenCell(pos shared.Position) error {
 
 func (g *Game) isFinished() bool {
 	return g.state == GameStateCompleted || g.state == GameStateFailed
-}
-
-func (g *Game) setRandomBombs(except shared.Position) {
-	poss := g.newRandomPositions(except)
-	for _, pos := range poss {
-		g.board.SetBomb(pos)
-		g.incrementBombCountArroundBomb(pos, g.board.IncrementBombCount)
-	}
-}
-
-func (g *Game) newRandomPositions(except shared.Position) []shared.Position {
-	n := g.bombCount
-	maxN := g.GetBoard().GetWidth()
-	var poss []shared.Position
-	for len(poss) != n {
-		pos := shared.NewRandomPosition(maxN)
-		if !reflect.DeepEqual(pos, except) && !slices.Contains(poss, pos) {
-			poss = append(poss, pos)
-		}
-	}
-	return poss
-}
-
-func (g *Game) incrementBombCountArroundBomb(pos shared.Position, incrementFunc func(pos shared.Position) error) {
-	cells := g.board.GetCells()
-	pos.ForEachNeighbor(func(p shared.Position) {
-		if g.board.inBoard(p) && !cells[p.Y][p.X].IsBomb() {
-			incrementFunc(p)
-		}
-	})
 }
 
 func (g *Game) CheckCell(pos shared.Position) error {
