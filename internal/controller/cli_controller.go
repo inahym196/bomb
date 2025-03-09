@@ -139,7 +139,7 @@ func (c *CLIController) Run() {
 			  > start <mode: easy or normal>        Start Game, Select gameMode
 			  > start custom <width> <bombCount>    Start Game, Set Custom width and bombCount
 			  > show                                Show board
-			  > open <row> <col>                    Open cell
+			  > open <row: int> <col: alpha>        Open cell
 			  > help                                Show this help message
 			  > exit                                Exit the program
 			`))

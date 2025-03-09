@@ -1,6 +1,10 @@
 package shared
 
-import "unicode"
+import (
+	"fmt"
+	"strings"
+	"unicode"
+)
 
 func NumToExcelColumn(n int) string {
 	result := ""
@@ -12,12 +16,13 @@ func NumToExcelColumn(n int) string {
 	return result
 }
 
-func ExcelColumnToNum(s string) int {
+func ExcelColumnToNum(s string) (int, error) {
 	result := 0
-	for _, ch := range s {
-		if unicode.IsLetter(ch) {
-			result = result*26 + (int(ch-'A') + 1)
+	for _, ch := range strings.ToUpper(s) {
+		if !unicode.IsLetter(ch) {
+			return 0, fmt.Errorf("%c is not letter", ch)
 		}
+		result = result*26 + (int(ch - 'A'))
 	}
-	return result
+	return result, nil
 }
