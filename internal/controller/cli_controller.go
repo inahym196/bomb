@@ -140,6 +140,7 @@ func (c *CLIController) Run() {
 			  > start custom <width> <bombCount>    Start Game, Set Custom width and bombCount
 			  > show                                Show board
 			  > open <row: int> <col: alpha>        Open cell
+			  > check/uncheck <row> <col>           Check/UnCheck cell
 			  > help                                Show this help message
 			  > exit                                Exit the program
 			`))
