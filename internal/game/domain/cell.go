@@ -19,7 +19,7 @@ func NewCell(isBomb bool) Cell {
 	return Cell{false, false, 0}
 }
 
-func (c Cell) Open() (Cell, error) {
+func (c Cell) WithOpen() (Cell, error) {
 	if c.isOpened {
 		return Cell{}, fmt.Errorf("すでに開放済みのセルです")
 	}

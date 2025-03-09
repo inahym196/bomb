@@ -71,7 +71,7 @@ func (b *Board) OpenCell(pos shared.Position) error {
 	if err != nil {
 		return err
 	}
-	openedCell, err := cell.Open()
+	openedCell, err := cell.WithOpen()
 	if err != nil {
 		return err
 	}
@@ -94,7 +94,7 @@ func (b *Board) expandOpenArea(pos shared.Position) {
 			continue
 		}
 		visited[pos] = true
-		if openedCell, err := cell.Open(); err == nil {
+		if openedCell, err := cell.WithOpen(); err == nil {
 			b.setCellAt(pos, openedCell)
 			b.closedCellCount--
 		}
