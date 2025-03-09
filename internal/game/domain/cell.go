@@ -28,7 +28,7 @@ func (c Cell) Open() (Cell, error) {
 
 func (c Cell) IncrementBombCount() (Cell, error) {
 	if c.bombCount == -1 {
-		return Cell{}, fmt.Errorf("ボムのマスは計算対象外です")
+		return Cell{}, fmt.Errorf("ボムのセルは計算対象外です")
 	}
 	return Cell{
 		isOpened:  c.isOpened,

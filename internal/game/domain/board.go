@@ -3,7 +3,6 @@ package domain
 import (
 	"container/list"
 	"fmt"
-	"maps"
 
 	"github.com/inahym196/bomb/pkg/shared"
 )
@@ -45,39 +44,26 @@ func initCells(width int) [][]Cell {
 }
 
 func (b *Board) SetBombs(positions map[shared.Position]struct{}) error {
-	for pos := range maps.Keys(positions) {
+	for pos := range positions {
 		if !b.contains(pos) {
 			return fmt.Errorf("ボード外のポジションは指定できません")
 		}
 		b.setCellAt(pos, NewCell(true))
-		b.incrementBombCountArroundBomb(pos)
+		b.incrementBombCountForEachNeighbor(pos)
 	}
 	return nil
 }
 
-func (b *Board) incrementBombCountArroundBomb(pos shared.Position) {
+func (b *Board) incrementBombCountForEachNeighbor(pos shared.Position) {
 	pos.ForEachNeighbor(func(p shared.Position) {
 		if !b.contains(p) {
 			return
 		}
-		cell, err := b.GetCellAt(p)
-		if err == nil && !cell.IsBomb() {
-			b.incrementBombCount(p)
+		if cell, _ := b.GetCellAt(p); !cell.IsBomb() {
+			newCell, _ := cell.IncrementBombCount()
+			b.setCellAt(p, newCell)
 		}
 	})
-}
-
-func (b *Board) incrementBombCount(pos shared.Position) (err error) {
-	cell, err := b.GetCellAt(pos)
-	if err != nil {
-		return err
-	}
-	newCell, err := cell.IncrementBombCount()
-	if err != nil {
-		return err
-	}
-	b.setCellAt(pos, newCell)
-	return nil
 }
 
 func (b *Board) OpenCell(pos shared.Position) error {
