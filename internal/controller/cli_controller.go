@@ -150,13 +150,18 @@ func (c *CLIController) Run() {
 }
 
 func (c *CLIController) parseGame(game interactor.GameDTO) (output string) {
-	for i, row := range game.BoardCells {
-		for j, cell := range row {
+	for j := range len(game.BoardCells) + 1 {
+		output += fmt.Sprintf("%2s", shared.NumToExcelColumn(j))
+	}
+	output += "\n"
+	for i := range game.BoardCells {
+		output += fmt.Sprintf("%2d", i)
+		for j, cell := range game.BoardCells[i] {
 			if _, ok := game.CheckedCellMap[shared.NewPosition(j, i)]; ok {
 				output += " x︎"
 				continue
 			}
-			output += fmt.Sprintf(" %s", cellToStr(cell))
+			output += fmt.Sprintf("%2s", cellToStr(cell))
 		}
 		output += "\n"
 	}
@@ -173,9 +178,14 @@ func cellToStr(cell interactor.CellDTO) string {
 	return fmt.Sprint(cell.BombCount)
 }
 func (c *CLIController) debugGame(game interactor.GameDTO) (output string) {
-	for _, row := range game.BoardCells {
-		for _, cell := range row {
-			output += fmt.Sprintf(" %s", cellToDebugStr(cell))
+	for j := range len(game.BoardCells) + 1 {
+		output += fmt.Sprintf("%2s", shared.NumToExcelColumn(j))
+	}
+	output += "\n"
+	for i := range game.BoardCells {
+		output += fmt.Sprintf("%2d", i)
+		for _, cell := range game.BoardCells[i] {
+			output += fmt.Sprintf("%2s", cellToDebugStr(cell))
 		}
 		output += "\n"
 	}
