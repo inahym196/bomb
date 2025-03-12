@@ -77,6 +77,14 @@ func (b *Board) incrementBombCountForEachNeighbor(pos shared.Position) {
 }
 
 func (b *Board) OpenCell(pos shared.Position) error {
+	if err := b.openCell(pos); err != nil {
+		return err
+	}
+	b.expandOpenArea(pos)
+	return nil
+}
+
+func (b *Board) openCell(pos shared.Position) error {
 	cell, err := b.GetCellAt(pos)
 	if err != nil {
 		return err
@@ -87,31 +95,26 @@ func (b *Board) OpenCell(pos shared.Position) error {
 	}
 	b.setCellAt(pos, openedCell)
 	b.closedCellCount--
-	b.expandOpenArea(pos)
 	return nil
 }
 
 func (b *Board) expandOpenArea(pos shared.Position) {
-	visited := map[shared.Position]bool{}
+	visited := make([][]bool, b.width)
+	for i := range visited {
+		visited[i] = make([]bool, b.width)
+	}
 	queue := list.New()
 	queue.PushBack(pos)
 	for queue.Len() > 0 {
 		front := queue.Front()
 		queue.Remove(front)
 		pos := front.Value.(shared.Position)
-		cell, err := b.GetCellAt(pos)
-		if err != nil {
-			continue
-		}
-		visited[pos] = true
-		if openedCell, err := cell.WithOpen(); err == nil {
-			b.setCellAt(pos, openedCell)
-			b.closedCellCount--
-		}
+		visited[pos.Y][pos.X] = true
+		_ = b.openCell(pos)
 		if b.bombCounts[pos.Y][pos.X] == 0 {
 			pos.ForEachNeighbor(func(p shared.Position) {
 				cell, err := b.GetCellAt(p)
-				if err == nil && !visited[p] && !cell.IsOpened() {
+				if err == nil && !visited[p.Y][p.X] && !cell.IsOpened() {
 					queue.PushBack(p)
 				}
 			})
