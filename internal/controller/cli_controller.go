@@ -86,7 +86,7 @@ func (c *CLIController) Run() {
 				fmt.Println(err.Error())
 				continue
 			}
-			param := si.GetHintParam{Cells: result.GameDTO.BoardCells}
+			param := si.GetHintParam{Game: result.GameDTO}
 			fmt.Println(c.si.GetHint(param))
 		case "open":
 			row, col, err := c.parseOpenArgs(words)
@@ -162,21 +162,21 @@ func (c *CLIController) parseGame(game interactor.GameDTO) (output string) {
 				output += " x︎"
 				continue
 			}
-			output += fmt.Sprintf("%2s", cellToStr(cell))
+			output += fmt.Sprintf("%2s", cellToStr(cell, game.BombCounts[i][j]))
 		}
 		output += "\n"
 	}
 	return output
 }
 
-func cellToStr(cell interactor.CellDTO) string {
+func cellToStr(cell interactor.CellDTO, bombCount int) string {
 	if !cell.IsOpened {
 		return "□"
 	}
 	if cell.IsBomb {
 		return "B"
 	}
-	return fmt.Sprint(cell.BombCount)
+	return fmt.Sprint(bombCount)
 }
 func (c *CLIController) debugGame(game interactor.GameDTO) (output string) {
 	for j := range len(game.BoardCells) + 1 {
@@ -185,19 +185,19 @@ func (c *CLIController) debugGame(game interactor.GameDTO) (output string) {
 	output += "\n"
 	for i := range game.BoardCells {
 		output += fmt.Sprintf("%2d", i)
-		for _, cell := range game.BoardCells[i] {
-			output += fmt.Sprintf("%2s", cellToDebugStr(cell))
+		for j, cell := range game.BoardCells[i] {
+			output += fmt.Sprintf("%2s", cellToDebugStr(cell, game.BombCounts[i][j]))
 		}
 		output += "\n"
 	}
 	return output
 }
 
-func cellToDebugStr(cell interactor.CellDTO) string {
+func cellToDebugStr(cell interactor.CellDTO, bombCount int) string {
 	if cell.IsBomb {
 		return "B"
 	}
-	return fmt.Sprint(cell.BombCount)
+	return fmt.Sprint(bombCount)
 }
 
 func stateToStr(state byte) string {
