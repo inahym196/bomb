@@ -22,7 +22,7 @@ func (b *Board) GetCheckedCellMap() map[shared.Position]struct{} { return b.chec
 func (b *Board) GetBombCounts() [][]int                          { return b.bombCounts }
 func (b *Board) GetCellAt(pos shared.Position) (Cell, error) {
 	if !b.contains(pos) {
-		return NewCell(false), fmt.Errorf("不正なポジションが選択されました. 有効なrow, columnの範囲は[0-%d]です", b.width-1)
+		return NewEmptyCell(), fmt.Errorf("不正なポジションが選択されました. 有効なrow, columnの範囲は[0-%d]です", b.width-1)
 	}
 	return b.cells[pos.Y][pos.X], nil
 }
@@ -39,7 +39,7 @@ func initCells(width int) [][]Cell {
 	for i := range width {
 		cells[i] = make([]Cell, width)
 		for j := range width {
-			cells[i][j] = NewCell(false)
+			cells[i][j] = NewEmptyCell()
 		}
 	}
 	return cells
@@ -61,7 +61,7 @@ func (b *Board) SetBombs(positions map[shared.Position]struct{}) error {
 		if !b.contains(pos) {
 			return fmt.Errorf("ボード外のポジションは指定できません")
 		}
-		b.setCellAt(pos, NewCell(true))
+		b.setCellAt(pos, NewBombCell())
 		b.bombCounts[pos.Y][pos.X] = -1
 		b.incrementBombCountForEachNeighbor(pos)
 	}
