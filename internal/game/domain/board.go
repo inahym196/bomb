@@ -20,11 +20,11 @@ func (b *Board) GetCells() [][]Cell                              { return b.cell
 func (b *Board) GetClosedCellCount() (count int)                 { return b.closedCellCount }
 func (b *Board) GetCheckedCellMap() map[shared.Position]struct{} { return b.checkedCellMap }
 func (b *Board) GetBombCounts() [][]int                          { return b.bombCounts }
-func (b *Board) GetCellAt(pos shared.Position) (Cell, error) {
+func (b *Board) GetCellAt(pos shared.Position) (*Cell, error) {
 	if !b.contains(pos) {
-		return NewEmptyCell(), fmt.Errorf("不正なポジションが選択されました. 有効なrow, columnの範囲は[0-%d]です", b.width-1)
+		return nil, fmt.Errorf("不正なポジションが選択されました. 有効なrow, columnの範囲は[0-%d]です", b.width-1)
 	}
-	return b.cells[pos.Y][pos.X], nil
+	return &b.cells[pos.Y][pos.X], nil
 }
 
 func (b *Board) contains(pos shared.Position) bool        { return pos.IsInside(b.width, b.width) }
