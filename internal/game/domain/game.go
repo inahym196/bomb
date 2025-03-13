@@ -15,12 +15,12 @@ const (
 
 type Game struct {
 	state     byte
-	board     *Board
+	bombField *BombField
 	bombCount int
 }
 
-func (g *Game) GetBoard() *Board { return g.board }
-func (g *Game) GetState() byte   { return g.state }
+func (g *Game) GetBombField() *BombField { return g.bombField }
+func (g *Game) GetState() byte           { return g.state }
 
 func NewGame(boardWidth, bombCount int) (*Game, error) {
 	if boardWidth < 2 {
@@ -32,7 +32,7 @@ func NewGame(boardWidth, bombCount int) (*Game, error) {
 	}
 	return &Game{
 		state:     GameStateReady,
-		board:     NewBoard(boardWidth),
+		bombField: NewBombField(boardWidth),
 		bombCount: bombCount,
 	}, nil
 }
@@ -42,17 +42,17 @@ func (g *Game) OpenCell(pos shared.Position) error {
 		return fmt.Errorf("ゲームはすでに終了しています")
 	}
 	if g.state == GameStateReady {
-		bombPositions := shared.NewUniqueRandomPositionsWithout(g.bombCount, g.board.GetWidth(), pos)
-		g.board.SetBombs(bombPositions)
+		bombPositions := shared.NewUniqueRandomPositionsWithout(g.bombCount, g.bombField.GetWidth(), pos)
+		g.bombField.SetBombs(bombPositions)
 		g.state = GameStatePlaying
 	}
-	if err := g.board.OpenCell(pos); err != nil {
+	if err := g.bombField.OpenCell(pos); err != nil {
 		return err
 	}
-	if cell, _ := g.board.GetCellAt(pos); cell.IsBomb() {
+	if cell, _ := g.bombField.GetCellAt(pos); cell.IsBomb() {
 		g.state = GameStateFailed
 	}
-	if g.bombCount == g.board.GetClosedCellCount() {
+	if g.bombCount == g.bombField.GetClosedCellCount() {
 		g.state = GameStateCompleted
 	}
 	return nil
@@ -66,14 +66,14 @@ func (g *Game) CheckCell(pos shared.Position) error {
 	if g.isFinished() {
 		return fmt.Errorf("ゲームはすでに終了しています")
 	}
-	return g.board.CheckCell(pos)
+	return g.bombField.CheckCell(pos)
 }
 
 func (g *Game) UnCheckCell(pos shared.Position) error {
 	if g.isFinished() {
 		return fmt.Errorf("ゲームはすでに終了しています")
 	}
-	err := g.board.UnCheckCell(pos)
+	err := g.bombField.UnCheckCell(pos)
 	if err != nil {
 		return err
 	}

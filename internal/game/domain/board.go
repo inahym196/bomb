@@ -24,26 +24,26 @@ func (b *board) GetCellAt(pos shared.Position) (*Cell, error) {
 func (b *board) contains(pos shared.Position) bool        { return pos.IsInside(b.width, b.width) }
 func (b *board) setCellAt(pos shared.Position, cell Cell) { b.cells[pos.Y][pos.X] = cell }
 
-type Board struct {
+type BombField struct {
 	board           *board
 	closedCellCount int
 	checkedCellMap  map[shared.Position]struct{}
 	bombCounts      [][]int
 }
 
-func (b *Board) GetWidth() int                                   { return b.board.GetWidth() }
-func (b *Board) GetCells() [][]Cell                              { return b.board.GetCells() }
-func (b *Board) GetClosedCellCount() (count int)                 { return b.closedCellCount }
-func (b *Board) GetCheckedCellMap() map[shared.Position]struct{} { return b.checkedCellMap }
-func (b *Board) GetBombCounts() [][]int                          { return b.bombCounts }
-func (b *Board) GetCellAt(pos shared.Position) (*Cell, error)    { return b.board.GetCellAt(pos) }
+func (bf *BombField) GetWidth() int                                   { return bf.board.GetWidth() }
+func (bf *BombField) GetCells() [][]Cell                              { return bf.board.GetCells() }
+func (bf *BombField) GetClosedCellCount() (count int)                 { return bf.closedCellCount }
+func (bf *BombField) GetCheckedCellMap() map[shared.Position]struct{} { return bf.checkedCellMap }
+func (bf *BombField) GetBombCounts() [][]int                          { return bf.bombCounts }
+func (bf *BombField) GetCellAt(pos shared.Position) (*Cell, error)    { return bf.board.GetCellAt(pos) }
 
-func (b *Board) contains(pos shared.Position) bool        { return b.board.contains(pos) }
-func (b *Board) setCellAt(pos shared.Position, cell Cell) { b.board.setCellAt(pos, cell) }
+func (bf *BombField) contains(pos shared.Position) bool        { return bf.board.contains(pos) }
+func (bf *BombField) setCellAt(pos shared.Position, cell Cell) { bf.board.setCellAt(pos, cell) }
 
-func NewBoard(width int) *Board {
+func NewBombField(width int) *BombField {
 	b := &board{width: width, cells: initCells(width)}
-	return &Board{b, width * width, map[shared.Position]struct{}{}, initBombCounts(width)}
+	return &BombField{b, width * width, map[shared.Position]struct{}{}, initBombCounts(width)}
 }
 
 func initCells(width int) [][]Cell {
@@ -68,36 +68,36 @@ func initBombCounts(width int) [][]int {
 	return bombCounts
 }
 
-func (b *Board) SetBombs(positions map[shared.Position]struct{}) error {
+func (bf *BombField) SetBombs(positions map[shared.Position]struct{}) error {
 	for pos := range positions {
-		if !b.contains(pos) {
+		if !bf.contains(pos) {
 			return fmt.Errorf("ボード外のポジションは指定できません")
 		}
-		b.setCellAt(pos, NewBombCell())
-		b.bombCounts[pos.Y][pos.X] = -1
-		b.incrementBombCountForEachNeighbor(pos)
+		bf.setCellAt(pos, NewBombCell())
+		bf.bombCounts[pos.Y][pos.X] = -1
+		bf.incrementBombCountForEachNeighbor(pos)
 	}
 	return nil
 }
 
-func (b *Board) incrementBombCountForEachNeighbor(pos shared.Position) {
+func (bf *BombField) incrementBombCountForEachNeighbor(pos shared.Position) {
 	pos.ForEachNeighbor(func(p shared.Position) {
-		if b.contains(p) && b.bombCounts[p.Y][p.X] != -1 {
-			b.bombCounts[p.Y][p.X]++
+		if bf.contains(p) && bf.bombCounts[p.Y][p.X] != -1 {
+			bf.bombCounts[p.Y][p.X]++
 		}
 	})
 }
 
-func (b *Board) OpenCell(pos shared.Position) error {
-	if err := b.openCell(pos); err != nil {
+func (bf *BombField) OpenCell(pos shared.Position) error {
+	if err := bf.openCell(pos); err != nil {
 		return err
 	}
-	b.expandOpenArea(pos)
+	bf.expandOpenArea(pos)
 	return nil
 }
 
-func (b *Board) openCell(pos shared.Position) error {
-	cell, err := b.GetCellAt(pos)
+func (bf *BombField) openCell(pos shared.Position) error {
+	cell, err := bf.GetCellAt(pos)
 	if err != nil {
 		return err
 	}
@@ -105,15 +105,15 @@ func (b *Board) openCell(pos shared.Position) error {
 	if err != nil {
 		return err
 	}
-	b.setCellAt(pos, openedCell)
-	b.closedCellCount--
+	bf.setCellAt(pos, openedCell)
+	bf.closedCellCount--
 	return nil
 }
 
-func (b *Board) expandOpenArea(pos shared.Position) {
-	visited := make([][]bool, b.board.GetWidth())
+func (bf *BombField) expandOpenArea(pos shared.Position) {
+	visited := make([][]bool, bf.board.GetWidth())
 	for i := range visited {
-		visited[i] = make([]bool, b.board.GetWidth())
+		visited[i] = make([]bool, bf.board.GetWidth())
 	}
 	queue := list.New()
 	queue.PushBack(pos)
@@ -122,10 +122,10 @@ func (b *Board) expandOpenArea(pos shared.Position) {
 		queue.Remove(front)
 		pos := front.Value.(shared.Position)
 		visited[pos.Y][pos.X] = true
-		_ = b.openCell(pos)
-		if b.bombCounts[pos.Y][pos.X] == 0 {
+		_ = bf.openCell(pos)
+		if bf.bombCounts[pos.Y][pos.X] == 0 {
 			pos.ForEachNeighbor(func(p shared.Position) {
-				cell, err := b.GetCellAt(p)
+				cell, err := bf.GetCellAt(p)
 				if err == nil && !visited[p.Y][p.X] && !cell.IsOpened() {
 					queue.PushBack(p)
 				}
@@ -134,26 +134,26 @@ func (b *Board) expandOpenArea(pos shared.Position) {
 	}
 }
 
-func (b *Board) CheckCell(pos shared.Position) error {
-	cell, err := b.GetCellAt(pos)
+func (bf *BombField) CheckCell(pos shared.Position) error {
+	cell, err := bf.GetCellAt(pos)
 	if err != nil {
 		return err
 	}
 	if cell.isOpened {
 		return fmt.Errorf("開放済みのセルです")
 	}
-	b.checkedCellMap[pos] = struct{}{}
+	bf.checkedCellMap[pos] = struct{}{}
 	return nil
 }
 
-func (b *Board) UnCheckCell(pos shared.Position) error {
-	cell, err := b.GetCellAt(pos)
+func (bf *BombField) UnCheckCell(pos shared.Position) error {
+	cell, err := bf.GetCellAt(pos)
 	if err != nil {
 		return err
 	}
 	if cell.isOpened {
 		return fmt.Errorf("開放済みのセルです")
 	}
-	delete(b.checkedCellMap, pos)
+	delete(bf.checkedCellMap, pos)
 	return nil
 }
