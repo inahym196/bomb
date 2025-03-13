@@ -10,7 +10,7 @@ type Cell struct {
 func (c Cell) IsOpened() bool { return c.isOpened }
 func (c Cell) IsBomb() bool   { return c.isBomb }
 
-func NewEmptyCell() Cell {
+func NewSafeCell() Cell {
 	return Cell{false, false}
 }
 

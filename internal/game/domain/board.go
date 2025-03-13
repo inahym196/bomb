@@ -39,7 +39,7 @@ func initCells(width int) [][]Cell {
 	for i := range width {
 		cells[i] = make([]Cell, width)
 		for j := range width {
-			cells[i][j] = NewEmptyCell()
+			cells[i][j] = NewSafeCell()
 		}
 	}
 	return cells
