@@ -14,9 +14,10 @@ const (
 )
 
 type Game struct {
-	state     byte
-	bombField *BombField
-	bombCount int
+	state      byte
+	bombField  *BombField
+	bombCount  int
+	boardWidth int
 }
 
 func (g *Game) GetBombField() *BombField { return g.bombField }
@@ -31,9 +32,10 @@ func NewGame(boardWidth, bombCount int) (*Game, error) {
 		return nil, fmt.Errorf("boardWidthが%dの時、bombCountは%d以下を指定してください", boardWidth, maxBombCount)
 	}
 	return &Game{
-		state:     GameStateReady,
-		bombField: NewBombField(boardWidth),
-		bombCount: bombCount,
+		state:      GameStateReady,
+		bombField:  NewBombField(boardWidth),
+		bombCount:  bombCount,
+		boardWidth: boardWidth,
 	}, nil
 }
 
@@ -42,7 +44,7 @@ func (g *Game) OpenCell(pos shared.Position) error {
 		return fmt.Errorf("ゲームはすでに終了しています")
 	}
 	if g.state == GameStateReady {
-		bombPositions := shared.NewUniqueRandomPositionsWithout(g.bombCount, g.bombField.GetWidth(), pos)
+		bombPositions := shared.NewUniqueRandomPositionsWithout(g.bombCount, g.boardWidth, pos)
 		g.bombField.SetBombs(bombPositions)
 		g.state = GameStatePlaying
 	}
