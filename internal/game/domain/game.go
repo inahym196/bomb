@@ -48,10 +48,11 @@ func (g *Game) OpenCell(pos shared.Position) error {
 		g.bombField.SetBombs(bombPositions)
 		g.state = GameStatePlaying
 	}
-	if err := g.bombField.OpenCell(pos); err != nil {
+	bursted, err := g.bombField.OpenCell(pos)
+	if err != nil {
 		return err
 	}
-	if cell, _ := g.bombField.GetCellAt(pos); cell.IsBomb() {
+	if bursted {
 		g.state = GameStateFailed
 	}
 	if g.bombCount == g.bombField.GetClosedCellCount() {

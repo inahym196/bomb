@@ -12,14 +12,12 @@ type BombField struct {
 	closedCellCount int
 	checkedCellMap  map[shared.Position]struct{}
 	bombCounts      [][]int
-	bursted         bool
 }
 
 func (bf *BombField) GetCells() [][]Cell                              { return bf.board.GetCells() }
 func (bf *BombField) GetClosedCellCount() (count int)                 { return bf.closedCellCount }
 func (bf *BombField) GetCheckedCellMap() map[shared.Position]struct{} { return bf.checkedCellMap }
 func (bf *BombField) GetBombCounts() [][]int                          { return bf.bombCounts }
-func (bf *BombField) GetCellAt(pos shared.Position) (*Cell, error)    { return bf.board.GetCellAt(pos) }
 
 func NewBombField(width int) *BombField {
 	return &BombField{
@@ -27,7 +25,6 @@ func NewBombField(width int) *BombField {
 		closedCellCount: width * width,
 		checkedCellMap:  map[shared.Position]struct{}{},
 		bombCounts:      initBombCounts(width),
-		bursted:         false,
 	}
 }
 
@@ -62,26 +59,30 @@ func (bf *BombField) incrementBombCountForEachNeighbor(pos shared.Position) {
 	})
 }
 
-func (bf *BombField) OpenCell(pos shared.Position) error {
-	if err := bf.openCell(pos); err != nil {
-		return err
+func (bf *BombField) OpenCell(pos shared.Position) (bursted bool, err error) {
+	bursted, err = bf.openCell(pos)
+	if err != nil {
+		return false, err
+	}
+	if bursted {
+		return true, nil
 	}
 	bf.expandSafeArea(pos)
-	return nil
+	return false, nil
 }
 
-func (bf *BombField) openCell(pos shared.Position) error {
+func (bf *BombField) openCell(pos shared.Position) (bursted bool, err error) {
 	cell, err := bf.board.GetCellAt(pos)
 	if err != nil {
-		return err
+		return false, err
 	}
 	openedCell, err := cell.WithOpen()
 	if err != nil {
-		return err
+		return false, err
 	}
 	bf.board.setCellAt(pos, openedCell)
 	bf.closedCellCount--
-	return nil
+	return openedCell.IsBomb(), nil
 }
 
 func (bf *BombField) expandSafeArea(pos shared.Position) {
@@ -96,7 +97,7 @@ func (bf *BombField) expandSafeArea(pos shared.Position) {
 		queue.Remove(front)
 		pos := front.Value.(shared.Position)
 		visited[pos.Y][pos.X] = true
-		_ = bf.openCell(pos)
+		_, _ = bf.openCell(pos)
 		if bf.bombCounts[pos.Y][pos.X] == 0 {
 			pos.ForEachNeighbor(func(p shared.Position) {
 				cell, err := bf.board.GetCellAt(p)
