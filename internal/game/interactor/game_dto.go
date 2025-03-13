@@ -18,7 +18,7 @@ type GameDTO struct {
 }
 
 func toGameDTO(game *domain.Game) GameDTO {
-	board := game.GetBoard()
+	board := game.GetBombField()
 	return GameDTO{cellsFrom(board.GetCells()), game.GetState(), board.GetCheckedCellMap(), board.GetBombCounts()}
 }
 

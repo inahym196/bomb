@@ -12,8 +12,8 @@ func BenchmarkSetBomb(b *testing.B) {
 	bombCount := 9
 	except := shared.NewRandomPosition(width)
 	bombPositions := shared.NewUniqueRandomPositionsWithout(width, bombCount, except)
-	board := NewBoard(width)
+	bombField := NewBombField(width)
 	for range b.N {
-		board.SetBombs(bombPositions)
+		bombField.SetBombs(bombPositions)
 	}
 }
