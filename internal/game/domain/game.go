@@ -46,8 +46,7 @@ func (g *Game) OpenCell(pos shared.Position) error {
 		g.board.SetBombs(bombPositions)
 		g.state = GameStatePlaying
 	}
-	err := g.board.OpenCell(pos)
-	if err != nil {
+	if err := g.board.OpenCell(pos); err != nil {
 		return err
 	}
 	if cell, _ := g.board.GetCellAt(pos); cell.IsBomb() {
