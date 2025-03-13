@@ -12,19 +12,21 @@ type BombField struct {
 	closedCellCount int
 	checkedCellMap  map[shared.Position]struct{}
 	bombCounts      [][]int
+	bombCount       int
 }
 
 func (bf *BombField) GetCells() [][]Cell                              { return bf.board.GetCells() }
-func (bf *BombField) GetClosedCellCount() (count int)                 { return bf.closedCellCount }
 func (bf *BombField) GetCheckedCellMap() map[shared.Position]struct{} { return bf.checkedCellMap }
 func (bf *BombField) GetBombCounts() [][]int                          { return bf.bombCounts }
+func (bf *BombField) IsPeaceFul() bool                                { return bf.closedCellCount == bf.bombCount }
 
-func NewBombField(width int) *BombField {
+func NewBombField(width int, bombCount int) *BombField {
 	return &BombField{
 		board:           NewBoard(width),
 		closedCellCount: width * width,
-		checkedCellMap:  map[shared.Position]struct{}{},
+		checkedCellMap:  make(map[shared.Position]struct{}, bombCount),
 		bombCounts:      initBombCounts(width),
+		bombCount:       bombCount,
 	}
 }
 

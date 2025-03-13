@@ -33,7 +33,7 @@ func NewGame(boardWidth, bombCount int) (*Game, error) {
 	}
 	return &Game{
 		state:      GameStateReady,
-		bombField:  NewBombField(boardWidth),
+		bombField:  NewBombField(boardWidth, bombCount),
 		bombCount:  bombCount,
 		boardWidth: boardWidth,
 	}, nil
@@ -55,7 +55,7 @@ func (g *Game) OpenCell(pos shared.Position) error {
 	if bursted {
 		g.state = GameStateFailed
 	}
-	if g.bombCount == g.bombField.GetClosedCellCount() {
+	if g.bombField.IsPeaceFul() {
 		g.state = GameStateCompleted
 	}
 	return nil
