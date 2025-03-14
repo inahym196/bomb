@@ -7,21 +7,19 @@ import (
 )
 
 const (
-	GameStateReady byte = iota
-	GameStatePlaying
+	GameStatePlaying byte = iota
 	GameStateCompleted
 	GameStateFailed
 )
 
 type Game struct {
-	state      byte
-	bombField  *BombField
-	totalBomb  int
-	boardWidth int
+	state     byte
+	bombField *BombField
 }
 
 func (g *Game) GetBombField() *BombField { return g.bombField }
 func (g *Game) GetState() byte           { return g.state }
+func (g *Game) isFinished() bool         { return g.state == GameStateCompleted || g.state == GameStateFailed }
 
 func NewGame(boardWidth, totalBomb int) (*Game, error) {
 	bombField, err := NewBombField(boardWidth, totalBomb)
@@ -29,21 +27,14 @@ func NewGame(boardWidth, totalBomb int) (*Game, error) {
 		return nil, err
 	}
 	return &Game{
-		state:      GameStateReady,
-		bombField:  bombField,
-		totalBomb:  totalBomb,
-		boardWidth: boardWidth,
+		state:     GameStatePlaying,
+		bombField: bombField,
 	}, nil
 }
 
 func (g *Game) OpenCell(pos shared.Position) error {
 	if g.isFinished() {
 		return fmt.Errorf("ゲームはすでに終了しています")
-	}
-	if g.state == GameStateReady {
-		bombPositions := shared.NewUniqueRandomPositionsWithout(g.totalBomb, g.boardWidth, pos)
-		g.bombField.SetBombs(bombPositions)
-		g.state = GameStatePlaying
 	}
 	bursted, err := g.bombField.OpenCell(pos)
 	if err != nil {
@@ -58,10 +49,6 @@ func (g *Game) OpenCell(pos shared.Position) error {
 	return nil
 }
 
-func (g *Game) isFinished() bool {
-	return g.state == GameStateCompleted || g.state == GameStateFailed
-}
-
 func (g *Game) CheckCell(pos shared.Position) error {
 	if g.isFinished() {
 		return fmt.Errorf("ゲームはすでに終了しています")
@@ -73,9 +60,5 @@ func (g *Game) UnCheckCell(pos shared.Position) error {
 	if g.isFinished() {
 		return fmt.Errorf("ゲームはすでに終了しています")
 	}
-	err := g.bombField.UnCheckCell(pos)
-	if err != nil {
-		return err
-	}
-	return nil
+	return g.bombField.UnCheckCell(pos)
 }
