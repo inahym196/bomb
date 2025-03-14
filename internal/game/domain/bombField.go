@@ -21,17 +21,19 @@ func (bg *bombGenerator) GenerateWithout(pos shared.Position) map[shared.Positio
 type BombField struct {
 	board           *board
 	closedCellCount int
-	checkedCellMap  map[shared.Position]struct{}
+	flagManager     *FlagManager
 	bombCounts      [][]int
 	totalBomb       int
 	bombGenerator   *bombGenerator
 }
 
-func (bf *BombField) GetCells() [][]Cell                              { return bf.board.GetCells() }
-func (bf *BombField) GetCheckedCellMap() map[shared.Position]struct{} { return bf.checkedCellMap }
-func (bf *BombField) GetBombCounts() [][]int                          { return bf.bombCounts }
-func (bf *BombField) IsPeaceFul() bool                                { return bf.closedCellCount == bf.totalBomb }
-func (bf *BombField) isAllClosed() bool                               { return bf.closedCellCount == bf.board.width*bf.board.width }
+func (bf *BombField) GetCells() [][]Cell     { return bf.board.GetCells() }
+func (bf *BombField) GetFlagMap() [][]bool   { return bf.flagManager.GetFlagMap() }
+func (bf *BombField) GetBombCounts() [][]int { return bf.bombCounts }
+
+func (bf *BombField) IsPeaceFul() bool                  { return bf.closedCellCount == bf.totalBomb }
+func (bf *BombField) isAllClosed() bool                 { return bf.closedCellCount == bf.board.width*bf.board.width }
+func (bf *BombField) Contains(pos shared.Position) bool { return bf.board.contains(pos) }
 
 func NewBombField(width int, totalBomb int) (*BombField, error) {
 	if width < 2 {
@@ -44,7 +46,7 @@ func NewBombField(width int, totalBomb int) (*BombField, error) {
 	return &BombField{
 		board:           NewBoard(width),
 		closedCellCount: width * width,
-		checkedCellMap:  make(map[shared.Position]struct{}, totalBomb),
+		flagManager:     NewFlagManager(width),
 		bombCounts:      initBombCounts(width),
 		totalBomb:       totalBomb,
 		bombGenerator:   newBombGenerator(totalBomb, width),
@@ -102,6 +104,9 @@ func (bf *BombField) openCell(pos shared.Position) (bursted bool, err error) {
 	if err != nil {
 		return false, err
 	}
+	if bf.flagManager.IsFlagged(pos) {
+		return false, fmt.Errorf("選択したポジションはフラグが立っているため開けません")
+	}
 	openedCell, err := cell.WithOpen()
 	if err != nil {
 		return false, err
@@ -135,26 +140,18 @@ func (bf *BombField) expandSafeArea(pos shared.Position) {
 	}
 }
 
-func (bf *BombField) CheckCell(pos shared.Position) error {
+func (bf *BombField) Flag(pos shared.Position) error {
 	cell, err := bf.board.GetCellAt(pos)
 	if err != nil {
 		return err
 	}
-	if cell.isOpened {
-		return fmt.Errorf("開放済みのセルです")
-	}
-	bf.checkedCellMap[pos] = struct{}{}
-	return nil
+	return bf.flagManager.Flag(pos, *cell)
 }
 
-func (bf *BombField) UnCheckCell(pos shared.Position) error {
+func (bf *BombField) UnFlag(pos shared.Position) error {
 	cell, err := bf.board.GetCellAt(pos)
 	if err != nil {
 		return err
 	}
-	if cell.isOpened {
-		return fmt.Errorf("開放済みのセルです")
-	}
-	delete(bf.checkedCellMap, pos)
-	return nil
+	return bf.flagManager.UnFlag(pos, *cell)
 }

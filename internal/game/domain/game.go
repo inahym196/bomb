@@ -49,16 +49,16 @@ func (g *Game) OpenCell(pos shared.Position) error {
 	return nil
 }
 
-func (g *Game) CheckCell(pos shared.Position) error {
+func (g *Game) Flag(pos shared.Position) error {
 	if g.isFinished() {
 		return fmt.Errorf("ゲームはすでに終了しています")
 	}
-	return g.bombField.CheckCell(pos)
+	return g.bombField.Flag(pos)
 }
 
-func (g *Game) UnCheckCell(pos shared.Position) error {
+func (g *Game) UnFlag(pos shared.Position) error {
 	if g.isFinished() {
 		return fmt.Errorf("ゲームはすでに終了しています")
 	}
-	return g.bombField.UnCheckCell(pos)
+	return g.bombField.UnFlag(pos)
 }
