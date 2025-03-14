@@ -106,7 +106,7 @@ func (gi *GameInteractor) CheckCell(param CheckCellParam) (CheckCellResult, erro
 	if !ok {
 		return CheckCellResult{}, fmt.Errorf("ゲームが初期化されていません")
 	}
-	if err := game.CheckCell(param.Pos); err != nil {
+	if err := game.Flag(param.Pos); err != nil {
 		return CheckCellResult{}, err
 	}
 	if err := gi.game_repo.Save(game); err != nil {
@@ -128,7 +128,7 @@ func (gi *GameInteractor) UnCheckCell(param UnCheckCellParam) (UnCheckCellResult
 	if !ok {
 		return UnCheckCellResult{}, fmt.Errorf("ゲームが初期化されていません")
 	}
-	if err := game.UnCheckCell(param.Pos); err != nil {
+	if err := game.UnFlag(param.Pos); err != nil {
 		return UnCheckCellResult{}, err
 	}
 	if err := gi.game_repo.Save(game); err != nil {
