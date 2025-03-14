@@ -19,6 +19,7 @@ func (bf *BombField) GetCells() [][]Cell                              { return b
 func (bf *BombField) GetCheckedCellMap() map[shared.Position]struct{} { return bf.checkedCellMap }
 func (bf *BombField) GetBombCounts() [][]int                          { return bf.bombCounts }
 func (bf *BombField) IsPeaceFul() bool                                { return bf.closedCellCount == bf.totalBomb }
+func (bf *BombField) isAllClosed() bool                               { return bf.closedCellCount == bf.board.width*bf.board.width }
 
 func NewBombField(width int, totalBomb int) (*BombField, error) {
 	if width < 2 {
@@ -48,7 +49,7 @@ func initBombCounts(width int) [][]int {
 	return totalBombs
 }
 
-func (bf *BombField) SetBombs(positions map[shared.Position]struct{}) error {
+func (bf *BombField) setBombs(positions map[shared.Position]struct{}) error {
 	for pos := range positions {
 		if !bf.board.contains(pos) {
 			return fmt.Errorf("ボード外のポジションは指定できません")
@@ -69,6 +70,10 @@ func (bf *BombField) incrementBombCountForEachNeighbor(pos shared.Position) {
 }
 
 func (bf *BombField) OpenCell(pos shared.Position) (bursted bool, err error) {
+	if bf.isAllClosed() {
+		bombPositions := shared.NewUniqueRandomPositionsWithout(bf.totalBomb, bf.board.width, pos)
+		bf.setBombs(bombPositions)
+	}
 	bursted, err = bf.openCell(pos)
 	if err != nil {
 		return false, err

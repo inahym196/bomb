@@ -202,8 +202,6 @@ func cellToDebugStr(cell interactor.CellDTO, totalBomb int) string {
 
 func stateToStr(state byte) string {
 	switch state {
-	case domain.GameStateReady:
-		return "Ready"
 	case domain.GameStatePlaying:
 		return "Playing"
 	case domain.GameStateCompleted:
