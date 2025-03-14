@@ -24,16 +24,13 @@ func (g *Game) GetBombField() *BombField { return g.bombField }
 func (g *Game) GetState() byte           { return g.state }
 
 func NewGame(boardWidth, totalBomb int) (*Game, error) {
-	if boardWidth < 2 {
-		return nil, fmt.Errorf("boardWidthの数は2以上を指定してください")
-	}
-	maxBombLimit := (boardWidth - 1) * (boardWidth - 1)
-	if maxBombLimit < totalBomb {
-		return nil, fmt.Errorf("boardWidthが%dの時、totalBombは%d以下を指定してください", boardWidth, maxBombLimit)
+	bombField, err := NewBombField(boardWidth, totalBomb)
+	if err != nil {
+		return nil, err
 	}
 	return &Game{
 		state:      GameStateReady,
-		bombField:  NewBombField(boardWidth, totalBomb),
+		bombField:  bombField,
 		totalBomb:  totalBomb,
 		boardWidth: boardWidth,
 	}, nil

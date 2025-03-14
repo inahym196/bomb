@@ -20,14 +20,21 @@ func (bf *BombField) GetCheckedCellMap() map[shared.Position]struct{} { return b
 func (bf *BombField) GetBombCounts() [][]int                          { return bf.bombCounts }
 func (bf *BombField) IsPeaceFul() bool                                { return bf.closedCellCount == bf.totalBomb }
 
-func NewBombField(width int, totalBomb int) *BombField {
+func NewBombField(width int, totalBomb int) (*BombField, error) {
+	if width < 2 {
+		return nil, fmt.Errorf("widthは2以上を指定してください")
+	}
+	maxBombLimit := (width - 1) * (width - 1)
+	if maxBombLimit < totalBomb {
+		return nil, fmt.Errorf("widthが%dの時、totalBombは%d以下を指定してください", width, maxBombLimit)
+	}
 	return &BombField{
 		board:           NewBoard(width),
 		closedCellCount: width * width,
 		checkedCellMap:  make(map[shared.Position]struct{}, totalBomb),
 		bombCounts:      initBombCounts(width),
 		totalBomb:       totalBomb,
-	}
+	}, nil
 }
 
 func initBombCounts(width int) [][]int {
