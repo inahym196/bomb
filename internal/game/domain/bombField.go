@@ -127,6 +127,9 @@ func (bf *BombField) expandSafeArea(pos shared.Position) {
 		front := queue.Front()
 		queue.Remove(front)
 		pos := front.Value.(shared.Position)
+		if visited[pos.Y][pos.X] {
+			continue
+		}
 		visited[pos.Y][pos.X] = true
 		_, _ = bf.openCell(pos)
 		if bf.bombCounts[pos.Y][pos.X] == 0 {
