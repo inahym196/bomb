@@ -37,7 +37,7 @@ func (c *CLIController) Run() {
 		}
 		switch words[0] {
 		case "start", "restart", "init":
-			var boardWidth, bombCount int
+			var boardWidth, totalBomb int
 			mode, err := c.parseStartGameModeArgs(words)
 			if err != nil {
 				fmt.Println(err.Error())
@@ -45,18 +45,18 @@ func (c *CLIController) Run() {
 			}
 			switch mode {
 			case GameModeEasy:
-				boardWidth, bombCount = 9, 10
+				boardWidth, totalBomb = 9, 10
 			case GameModeNormal:
-				boardWidth, bombCount = 16, 40
+				boardWidth, totalBomb = 16, 40
 			case GameModeCustom:
-				boardWidth, bombCount, err = c.parseStartCustomModeArgs(words)
+				boardWidth, totalBomb, err = c.parseStartCustomModeArgs(words)
 				if err != nil {
 					fmt.Println(err.Error())
 				}
 			}
 			result, err := c.gi.InitGame(interactor.InitGameParam{
 				BoardWidth: boardWidth,
-				BombCount:  bombCount,
+				BombCount:  totalBomb,
 			})
 			if err != nil {
 				fmt.Println(err.Error())
@@ -137,7 +137,7 @@ func (c *CLIController) Run() {
 			fmt.Println(heredoc.Doc(`
 			Available Commands:
 			  > start <mode: easy or normal>        Start Game, Select gameMode
-			  > start custom <width> <bombCount>    Start Game, Set Custom width and bombCount
+			  > start custom <width> <totalBomb>    Start Game, Set Custom width and totalBomb
 			  > show                                Show board
 			  > open <row: int> <col: alpha>        Open cell
 			  > check/uncheck <row> <col>           Check/UnCheck cell
@@ -169,14 +169,14 @@ func (c *CLIController) parseGame(game interactor.GameDTO) (output string) {
 	return output
 }
 
-func cellToStr(cell interactor.CellDTO, bombCount int) string {
+func cellToStr(cell interactor.CellDTO, totalBomb int) string {
 	if !cell.IsOpened {
 		return "□"
 	}
 	if cell.IsBomb {
 		return "B"
 	}
-	return fmt.Sprint(bombCount)
+	return fmt.Sprint(totalBomb)
 }
 func (c *CLIController) debugGame(game interactor.GameDTO) (output string) {
 	for j := range len(game.BoardCells) + 1 {
@@ -193,11 +193,11 @@ func (c *CLIController) debugGame(game interactor.GameDTO) (output string) {
 	return output
 }
 
-func cellToDebugStr(cell interactor.CellDTO, bombCount int) string {
+func cellToDebugStr(cell interactor.CellDTO, totalBomb int) string {
 	if cell.IsBomb {
 		return "B"
 	}
-	return fmt.Sprint(bombCount)
+	return fmt.Sprint(totalBomb)
 }
 
 func stateToStr(state byte) string {

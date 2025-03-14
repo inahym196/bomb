@@ -19,7 +19,7 @@ go run cmd/main.go
 Enter command> help
 Available Commands:
   > start <mode: easy or normal>        Start Game, Select gameMode
-  > start custom <width> <bombCount>    Start Game, Set Custom width and bombCount
+  > start custom <width> <totalBomb>    Start Game, Set Custom width and totalBomb
   > show                                Show board
   > open <row: int> <col: alpha>        Open cell
   > check/uncheck <row> <col>           Check/UnCheck cell

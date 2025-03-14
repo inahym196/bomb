@@ -16,25 +16,25 @@ const (
 type Game struct {
 	state      byte
 	bombField  *BombField
-	bombCount  int
+	totalBomb  int
 	boardWidth int
 }
 
 func (g *Game) GetBombField() *BombField { return g.bombField }
 func (g *Game) GetState() byte           { return g.state }
 
-func NewGame(boardWidth, bombCount int) (*Game, error) {
+func NewGame(boardWidth, totalBomb int) (*Game, error) {
 	if boardWidth < 2 {
 		return nil, fmt.Errorf("boardWidthの数は2以上を指定してください")
 	}
-	maxBombCount := (boardWidth - 1) * (boardWidth - 1)
-	if maxBombCount < bombCount {
-		return nil, fmt.Errorf("boardWidthが%dの時、bombCountは%d以下を指定してください", boardWidth, maxBombCount)
+	maxBombLimit := (boardWidth - 1) * (boardWidth - 1)
+	if maxBombLimit < totalBomb {
+		return nil, fmt.Errorf("boardWidthが%dの時、totalBombは%d以下を指定してください", boardWidth, maxBombLimit)
 	}
 	return &Game{
 		state:      GameStateReady,
-		bombField:  NewBombField(boardWidth, bombCount),
-		bombCount:  bombCount,
+		bombField:  NewBombField(boardWidth, totalBomb),
+		totalBomb:  totalBomb,
 		boardWidth: boardWidth,
 	}, nil
 }
@@ -44,7 +44,7 @@ func (g *Game) OpenCell(pos shared.Position) error {
 		return fmt.Errorf("ゲームはすでに終了しています")
 	}
 	if g.state == GameStateReady {
-		bombPositions := shared.NewUniqueRandomPositionsWithout(g.bombCount, g.boardWidth, pos)
+		bombPositions := shared.NewUniqueRandomPositionsWithout(g.totalBomb, g.boardWidth, pos)
 		g.bombField.SetBombs(bombPositions)
 		g.state = GameStatePlaying
 	}

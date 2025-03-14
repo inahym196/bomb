@@ -12,33 +12,33 @@ type BombField struct {
 	closedCellCount int
 	checkedCellMap  map[shared.Position]struct{}
 	bombCounts      [][]int
-	bombCount       int
+	totalBomb       int
 }
 
 func (bf *BombField) GetCells() [][]Cell                              { return bf.board.GetCells() }
 func (bf *BombField) GetCheckedCellMap() map[shared.Position]struct{} { return bf.checkedCellMap }
 func (bf *BombField) GetBombCounts() [][]int                          { return bf.bombCounts }
-func (bf *BombField) IsPeaceFul() bool                                { return bf.closedCellCount == bf.bombCount }
+func (bf *BombField) IsPeaceFul() bool                                { return bf.closedCellCount == bf.totalBomb }
 
-func NewBombField(width int, bombCount int) *BombField {
+func NewBombField(width int, totalBomb int) *BombField {
 	return &BombField{
 		board:           NewBoard(width),
 		closedCellCount: width * width,
-		checkedCellMap:  make(map[shared.Position]struct{}, bombCount),
+		checkedCellMap:  make(map[shared.Position]struct{}, totalBomb),
 		bombCounts:      initBombCounts(width),
-		bombCount:       bombCount,
+		totalBomb:       totalBomb,
 	}
 }
 
 func initBombCounts(width int) [][]int {
-	bombCounts := make([][]int, width)
+	totalBombs := make([][]int, width)
 	for i := range width {
-		bombCounts[i] = make([]int, width)
+		totalBombs[i] = make([]int, width)
 		for j := range width {
-			bombCounts[i][j] = 0
+			totalBombs[i][j] = 0
 		}
 	}
-	return bombCounts
+	return totalBombs
 }
 
 func (bf *BombField) SetBombs(positions map[shared.Position]struct{}) error {
