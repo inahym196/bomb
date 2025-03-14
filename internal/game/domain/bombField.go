@@ -7,12 +7,24 @@ import (
 	"github.com/inahym196/bomb/pkg/shared"
 )
 
+type bombGenerator struct {
+	totalBomb int
+	width     int
+}
+
+func newBombGenerator(totalBomb, width int) *bombGenerator { return &bombGenerator{totalBomb, width} }
+
+func (bg *bombGenerator) GenerateWithout(pos shared.Position) map[shared.Position]struct{} {
+	return shared.NewUniqueRandomPositionsWithout(bg.totalBomb, bg.width, pos)
+}
+
 type BombField struct {
 	board           *board
 	closedCellCount int
 	checkedCellMap  map[shared.Position]struct{}
 	bombCounts      [][]int
 	totalBomb       int
+	bombGenerator   *bombGenerator
 }
 
 func (bf *BombField) GetCells() [][]Cell                              { return bf.board.GetCells() }
@@ -35,6 +47,7 @@ func NewBombField(width int, totalBomb int) (*BombField, error) {
 		checkedCellMap:  make(map[shared.Position]struct{}, totalBomb),
 		bombCounts:      initBombCounts(width),
 		totalBomb:       totalBomb,
+		bombGenerator:   newBombGenerator(totalBomb, width),
 	}, nil
 }
 
@@ -71,8 +84,7 @@ func (bf *BombField) incrementBombCountForEachNeighbor(pos shared.Position) {
 
 func (bf *BombField) OpenCell(pos shared.Position) (bursted bool, err error) {
 	if bf.isAllClosed() {
-		bombPositions := shared.NewUniqueRandomPositionsWithout(bf.totalBomb, bf.board.width, pos)
-		bf.setBombs(bombPositions)
+		bf.setBombs(bf.bombGenerator.GenerateWithout(pos))
 	}
 	bursted, err = bf.openCell(pos)
 	if err != nil {
