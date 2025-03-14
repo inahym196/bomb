@@ -58,14 +58,14 @@ type Theorem interface {
 type theorem1 struct{}
 
 func (t theorem1) GetDescription() string {
-	return "shadyCellsがbombCount以下なら全部bomb"
+	return "shadyCellsがtotalBomb以下なら全部bomb"
 }
 
 func (t theorem1) Apply(cells map[shared.Position]OpenCell) Solution {
 	poss := make([]shared.Position, 0, len(cells)/2)
 	for opencell := range maps.Values(cells) {
 		shadyCells := opencell.GetShadyCellKeys()
-		if len(shadyCells) <= opencell.bombCount {
+		if len(shadyCells) <= opencell.GetBombCount() {
 			poss = append(poss, shadyCells...)
 		}
 	}

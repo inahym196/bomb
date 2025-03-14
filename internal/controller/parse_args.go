@@ -35,7 +35,7 @@ func (c *CLIController) parseStartGameModeArgs(words []string) (mode byte, err e
 	}
 }
 
-func (c *CLIController) parseStartCustomModeArgs(words []string) (boardWidth, bombCount int, err error) {
+func (c *CLIController) parseStartCustomModeArgs(words []string) (boardWidth, totalBomb int, err error) {
 	if words[1] != "custom" {
 		log.Fatalln("この関数はcustomModeでのみ呼び出し可能です")
 	}
@@ -46,11 +46,11 @@ func (c *CLIController) parseStartCustomModeArgs(words []string) (boardWidth, bo
 	if err != nil {
 		return 0, 0, fmt.Errorf("boardWidthの値が不正です. 数字を入力してください")
 	}
-	bombCount, err = strconv.Atoi(words[3])
+	totalBomb, err = strconv.Atoi(words[3])
 	if err != nil {
-		return 0, 0, fmt.Errorf("bombCountの値が不正です. 数字を入力してください")
+		return 0, 0, fmt.Errorf("totalBombの値が不正です. 数字を入力してください")
 	}
-	return boardWidth, bombCount, nil
+	return boardWidth, totalBomb, nil
 }
 
 func (c *CLIController) parseOpenArgs(words []string) (row, col int, err error) {

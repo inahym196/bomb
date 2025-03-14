@@ -9,10 +9,10 @@ import (
 func BenchmarkSetBomb(b *testing.B) {
 	b.ResetTimer()
 	width := 10
-	bombCount := 9
+	totalBomb := 9
 	except := shared.NewRandomPosition(width)
-	bombPositions := shared.NewUniqueRandomPositionsWithout(width, bombCount, except)
-	bombField := NewBombField(width, bombCount)
+	bombPositions := shared.NewUniqueRandomPositionsWithout(width, totalBomb, except)
+	bombField := NewBombField(width, totalBomb)
 	for range b.N {
 		bombField.SetBombs(bombPositions)
 	}
