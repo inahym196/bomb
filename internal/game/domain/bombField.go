@@ -132,7 +132,7 @@ func (bf *BombField) expandSafeArea(pos shared.Position) {
 		if bf.bombCounts[pos.Y][pos.X] == 0 {
 			pos.ForEachNeighbor(func(p shared.Position) {
 				cell, err := bf.board.GetCellAt(p)
-				if err == nil && !visited[p.Y][p.X] && !cell.IsOpened() {
+				if err == nil && !visited[p.Y][p.X] && !cell.IsOpened() && !bf.flagManager.IsFlagged(p) {
 					queue.PushBack(p)
 				}
 			})
