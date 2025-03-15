@@ -8,27 +8,16 @@ import (
 	"github.com/inahym196/bomb/pkg/shared"
 )
 
-type bombGenerator struct {
-	totalBomb int
-	width     int
-}
-
-func newBombGenerator(totalBomb, width int) *bombGenerator { return &bombGenerator{totalBomb, width} }
-
-func (bg *bombGenerator) GenerateWithout(pos shared.Position) map[shared.Position]struct{} {
-	return shared.NewUniqueRandomPositionsWithout(bg.totalBomb, bg.width, pos)
-}
-
 type BombField struct {
 	board           *board
 	closedCellCount int
-	bombCounts      [][]int
+	bombCounter     *bombCounter
 	totalBomb       int
 	bombGenerator   *bombGenerator
 }
 
 func (bf *BombField) GetCells() [][]Cell     { return bf.board.GetCells() }
-func (bf *BombField) GetBombCounts() [][]int { return bf.bombCounts }
+func (bf *BombField) GetBombCounts() [][]int { return bf.bombCounter.counts }
 
 func (bf *BombField) IsPeaceFul() bool                  { return bf.closedCellCount == bf.totalBomb }
 func (bf *BombField) isAllClosed() bool                 { return bf.closedCellCount == bf.board.width*bf.board.width }
@@ -45,21 +34,10 @@ func NewBombField(width int, totalBomb int) (*BombField, error) {
 	return &BombField{
 		board:           NewBoard(width),
 		closedCellCount: width * width,
-		bombCounts:      initBombCounts(width),
+		bombCounter:     newBombCounter(width),
 		totalBomb:       totalBomb,
 		bombGenerator:   newBombGenerator(totalBomb, width),
 	}, nil
-}
-
-func initBombCounts(width int) [][]int {
-	totalBombs := make([][]int, width)
-	for i := range width {
-		totalBombs[i] = make([]int, width)
-		for j := range width {
-			totalBombs[i][j] = 0
-		}
-	}
-	return totalBombs
 }
 
 func (bf *BombField) OpenCell(pos shared.Position) (bursted bool, err error) {
@@ -83,18 +61,9 @@ func (bf *BombField) setBombs(positions map[shared.Position]struct{}) error {
 			return fmt.Errorf("ボード外のポジションは指定できません")
 		}
 		bf.board.setCellAt(pos, NewBombCell())
-		bf.bombCounts[pos.Y][pos.X] = -1
-		bf.incrementBombCountForEachNeighbor(pos)
+		bf.bombCounter.SetBombCount(pos)
 	}
 	return nil
-}
-
-func (bf *BombField) incrementBombCountForEachNeighbor(pos shared.Position) {
-	pos.ForEachNeighbor(func(p shared.Position) {
-		if bf.board.contains(p) && bf.bombCounts[p.Y][p.X] != -1 {
-			bf.bombCounts[p.Y][p.X]++
-		}
-	})
 }
 
 func (bf *BombField) openCell(pos shared.Position) (bursted bool, err error) {
@@ -127,7 +96,7 @@ func (bf *BombField) expandSafeArea(pos shared.Position) {
 		}
 		visited[pos.Y][pos.X] = true
 		_, _ = bf.openCell(pos)
-		if bf.bombCounts[pos.Y][pos.X] == 0 {
+		if bf.bombCounter.IsNeighborsSafe(pos) {
 			pos.ForEachNeighbor(func(p shared.Position) {
 				cell, err := bf.board.GetCellAt(p)
 				if err == nil && !visited[p.Y][p.X] && cell.CanOpen() {
