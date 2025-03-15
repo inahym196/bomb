@@ -139,7 +139,7 @@ func (bf *BombField) expandSafeArea(pos shared.Position) {
 }
 
 func (bf *BombField) Flag(pos shared.Position) (err error) {
-	errorutil.Wrap(&err, "flag(%v)", pos)
+	defer errorutil.Wrap(&err, "flag(%v)", pos)
 	cell, err := bf.board.GetCellAt(pos)
 	if err != nil {
 		return err
@@ -153,7 +153,7 @@ func (bf *BombField) Flag(pos shared.Position) (err error) {
 }
 
 func (bf *BombField) UnFlag(pos shared.Position) (err error) {
-	errorutil.Wrap(&err, "unflag(%v)", pos)
+	defer errorutil.Wrap(&err, "unflag(%v)", pos)
 	cell, err := bf.board.GetCellAt(pos)
 	if err != nil {
 		return err
