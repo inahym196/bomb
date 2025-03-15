@@ -158,7 +158,7 @@ func (c *CLIController) parseGame(game interactor.GameDTO) (output string) {
 	for i := range game.BoardCells {
 		output += fmt.Sprintf("%2d", i)
 		for j, cell := range game.BoardCells[i] {
-			if game.FlagMap[i][j] {
+			if cell.IsFlagged {
 				output += " x︎"
 				continue
 			}

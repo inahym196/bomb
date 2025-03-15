@@ -5,15 +5,15 @@ import (
 )
 
 type CellDTO struct {
-	IsOpened bool
-	IsBomb   bool
+	IsOpened  bool
+	IsBomb    bool
+	IsFlagged bool
 }
 
 type GameDTO struct {
 	BoardCells [][]CellDTO
 	State      byte
 	BombCounts [][]int
-	FlagMap    [][]bool
 }
 
 func toGameDTO(game *domain.Game) GameDTO {
@@ -22,7 +22,6 @@ func toGameDTO(game *domain.Game) GameDTO {
 		BoardCells: cellsFrom(bombField.GetCells()),
 		State:      game.GetState(),
 		BombCounts: bombField.GetBombCounts(),
-		FlagMap:    bombField.GetFlagMap(),
 	}
 }
 
@@ -39,7 +38,8 @@ func cellsFrom(cells [][]domain.Cell) [][]CellDTO {
 
 func cellFrom(cell domain.Cell) CellDTO {
 	return CellDTO{
-		IsOpened: cell.IsOpened(),
-		IsBomb:   cell.IsBomb(),
+		IsOpened:  cell.IsOpened(),
+		IsBomb:    cell.IsBomb(),
+		IsFlagged: cell.IsFlagged(),
 	}
 }
