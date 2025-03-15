@@ -1,0 +1,40 @@
+@startuml object_diagram
+hide empty members
+
+object main
+
+package Presentation{
+    object CLIController
+}
+
+package GameContext{
+    package UseCases{
+        object GameInteractor
+        object GameDTO
+    }
+    package Domain{
+        object Game<<Aggregate>>{
+            state
+            bombField
+        }
+        object BombField
+    }
+}
+package SolverContext{
+    package UseCases{
+        object GameSolverInteractor
+    }
+
+    package Domain{
+        object Solver<<Aggregate>>
+    }
+}
+main --> CLIController
+CLIController --> GameInteractor
+CLIController --> GameSolverInteractor
+GameInteractor --> Game
+GameInteractor .> GameDTO
+Game *--> BombField
+GameSolverInteractor --> Solver
+
+@enduml
