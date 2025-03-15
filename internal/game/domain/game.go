@@ -36,11 +36,11 @@ func (g *Game) OpenCell(pos shared.Position) error {
 	if g.isFinished() {
 		return fmt.Errorf("ゲームはすでに終了しています")
 	}
-	bursted, err := g.bombField.OpenCell(pos)
+	err := g.bombField.OpenCell(pos)
 	if err != nil {
 		return err
 	}
-	if bursted {
+	if g.bombField.IsBursted() {
 		g.state = GameStateFailed
 	}
 	if g.bombField.IsPeaceFul() {
