@@ -19,12 +19,6 @@ func (b *board) GetCellAt(pos shared.Position) (*Cell, error) {
 	}
 	return &b.cells[pos.Y][pos.X], nil
 }
-func (b *board) IsCellOpen(pos shared.Position) (bool, error) {
-	if !b.contains(pos) {
-		return false, fmt.Errorf("不正なポジションが選択されました. 有効なrow, columnの範囲は[0-%d]です", b.width-1)
-	}
-	return b.cells[pos.Y][pos.X].isOpened, nil
-}
 
 func (b *board) contains(pos shared.Position) bool        { return pos.IsInside(b.width, b.width) }
 func (b *board) setCellAt(pos shared.Position, cell Cell) { b.cells[pos.Y][pos.X] = cell }
