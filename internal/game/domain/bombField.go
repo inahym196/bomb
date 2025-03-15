@@ -4,6 +4,7 @@ import (
 	"container/list"
 	"fmt"
 
+	"github.com/inahym196/bomb/pkg/errorutil"
 	"github.com/inahym196/bomb/pkg/shared"
 )
 
@@ -21,14 +22,12 @@ func (bg *bombGenerator) GenerateWithout(pos shared.Position) map[shared.Positio
 type BombField struct {
 	board           *board
 	closedCellCount int
-	flagManager     *FlagManager
 	bombCounts      [][]int
 	totalBomb       int
 	bombGenerator   *bombGenerator
 }
 
 func (bf *BombField) GetCells() [][]Cell     { return bf.board.GetCells() }
-func (bf *BombField) GetFlagMap() [][]bool   { return bf.flagManager.GetFlagMap() }
 func (bf *BombField) GetBombCounts() [][]int { return bf.bombCounts }
 
 func (bf *BombField) IsPeaceFul() bool                  { return bf.closedCellCount == bf.totalBomb }
@@ -46,7 +45,6 @@ func NewBombField(width int, totalBomb int) (*BombField, error) {
 	return &BombField{
 		board:           NewBoard(width),
 		closedCellCount: width * width,
-		flagManager:     NewFlagManager(width),
 		bombCounts:      initBombCounts(width),
 		totalBomb:       totalBomb,
 		bombGenerator:   newBombGenerator(totalBomb, width),
@@ -104,10 +102,7 @@ func (bf *BombField) openCell(pos shared.Position) (bursted bool, err error) {
 	if err != nil {
 		return false, err
 	}
-	if bf.flagManager.IsFlagged(pos) {
-		return false, fmt.Errorf("選択したポジションはフラグが立っているため開けません")
-	}
-	openedCell, err := cell.WithOpen()
+	openedCell, err := cell.Open()
 	if err != nil {
 		return false, err
 	}
@@ -135,7 +130,7 @@ func (bf *BombField) expandSafeArea(pos shared.Position) {
 		if bf.bombCounts[pos.Y][pos.X] == 0 {
 			pos.ForEachNeighbor(func(p shared.Position) {
 				cell, err := bf.board.GetCellAt(p)
-				if err == nil && !visited[p.Y][p.X] && !cell.IsOpened() && !bf.flagManager.IsFlagged(p) {
+				if err == nil && !visited[p.Y][p.X] && cell.CanOpen() {
 					queue.PushBack(p)
 				}
 			})
@@ -143,18 +138,30 @@ func (bf *BombField) expandSafeArea(pos shared.Position) {
 	}
 }
 
-func (bf *BombField) Flag(pos shared.Position) error {
+func (bf *BombField) Flag(pos shared.Position) (err error) {
+	errorutil.Wrap(&err, "flag(%v)", pos)
 	cell, err := bf.board.GetCellAt(pos)
 	if err != nil {
 		return err
 	}
-	return bf.flagManager.Flag(pos, *cell)
+	flagged, err := cell.Flagged()
+	if err != nil {
+		return err
+	}
+	bf.board.setCellAt(pos, flagged)
+	return nil
 }
 
-func (bf *BombField) UnFlag(pos shared.Position) error {
+func (bf *BombField) UnFlag(pos shared.Position) (err error) {
+	errorutil.Wrap(&err, "unflag(%v)", pos)
 	cell, err := bf.board.GetCellAt(pos)
 	if err != nil {
 		return err
 	}
-	return bf.flagManager.UnFlag(pos, *cell)
+	unflagged, err := cell.UnFlagged()
+	if err != nil {
+		return err
+	}
+	bf.board.setCellAt(pos, unflagged)
+	return nil
 }
