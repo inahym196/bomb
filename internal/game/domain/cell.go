@@ -31,6 +31,12 @@ func NewBombCell() Cell {
 	}
 }
 
+func (c Cell) Equals(target Cell) bool {
+	return c.isBomb == target.isBomb &&
+		c.isFlagged == target.isFlagged &&
+		c.isOpened == target.isOpened
+}
+
 func (c Cell) Open() (Cell, error) {
 	if c.isOpened {
 		return Cell{}, errors.New("cell is already opened")

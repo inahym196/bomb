@@ -6,13 +6,15 @@ type BombGenerator interface {
 	GenerateWithout(pos shared.Position) map[shared.Position]struct{}
 }
 
-type bombGenerator struct {
+type defaultBombGenerator struct {
 	totalBomb int
 	width     int
 }
 
-func newBombGenerator(totalBomb, width int) *bombGenerator { return &bombGenerator{totalBomb, width} }
+func newDefaultBombGenerator(totalBomb, width int) *defaultBombGenerator {
+	return &defaultBombGenerator{totalBomb, width}
+}
 
-func (bg *bombGenerator) GenerateWithout(pos shared.Position) map[shared.Position]struct{} {
+func (bg *defaultBombGenerator) GenerateWithout(pos shared.Position) map[shared.Position]struct{} {
 	return shared.NewUniqueRandomPositionsWithout(bg.totalBomb, bg.width, pos)
 }

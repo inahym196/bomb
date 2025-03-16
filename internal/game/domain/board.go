@@ -19,6 +19,19 @@ func (b *board) GetCellAt(pos shared.Position) (*Cell, error) {
 	}
 	return &b.cells[pos.Y][pos.X], nil
 }
+func (b *board) Equals(target *board) bool {
+	if b.width != target.width {
+		return false
+	}
+	for i := range b.width {
+		for j := range b.width {
+			if !b.cells[i][j].Equals(target.cells[i][j]) {
+				return false
+			}
+		}
+	}
+	return true
+}
 
 func (b *board) contains(pos shared.Position) bool        { return pos.IsInside(b.width, b.width) }
 func (b *board) setCellAt(pos shared.Position, cell Cell) { b.cells[pos.Y][pos.X] = cell }
