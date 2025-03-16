@@ -32,7 +32,7 @@ func NewBombField(width int, totalBomb int) (*BombField, error) {
 	return &BombField{
 		board:         NewBoard(width),
 		bombCounter:   newBombCounter(width),
-		bombGenerator: newBombGenerator(totalBomb, width),
+		bombGenerator: newDefaultBombGenerator(totalBomb, width),
 		state:         newFieldState(totalBomb, width),
 	}, nil
 }
