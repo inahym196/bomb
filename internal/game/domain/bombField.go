@@ -11,7 +11,7 @@ import (
 type BombField struct {
 	board         *board
 	bombCounter   *bombCounter
-	bombGenerator *bombGenerator
+	bombGenerator BombGenerator
 	state         *fieldState
 }
 
@@ -35,6 +35,10 @@ func NewBombField(width int, totalBomb int) (*BombField, error) {
 		bombGenerator: newBombGenerator(totalBomb, width),
 		state:         newFieldState(totalBomb, width),
 	}, nil
+}
+
+func (bf *BombField) WithBombGenerator(bg BombGenerator) {
+	bf.bombGenerator = bg
 }
 
 func (bf *BombField) OpenCell(pos shared.Position) (err error) {
