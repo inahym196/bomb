@@ -40,7 +40,11 @@ func NewSolverCells(game interactor.GameDTO) map[shared.Position]OpenCell {
 func findShadyCellsFrom(cells [][]interactor.CellDTO, pos shared.Position) map[shared.Position]struct{} {
 	shadyCells := make(map[shared.Position]struct{})
 	pos.ForEachNeighbor(func(pos shared.Position) {
-		if isInCells(cells, pos) && !cells[pos.Y][pos.X].IsOpened {
+		if !isInCells(cells, pos) {
+			return
+		}
+		cell := cells[pos.Y][pos.X]
+		if !cell.IsOpened && !cell.IsFlagged {
 			shadyCells[pos] = struct{}{}
 		}
 	})
