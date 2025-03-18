@@ -3,7 +3,7 @@ package domain
 import "github.com/inahym196/bomb/pkg/shared"
 
 type BombGenerator interface {
-	GenerateWithout(pos shared.Position) map[shared.Position]struct{}
+	GenerateWithout(pos shared.Position) []shared.Position
 }
 
 type defaultBombGenerator struct {
@@ -15,6 +15,6 @@ func newDefaultBombGenerator(totalBomb, width int) *defaultBombGenerator {
 	return &defaultBombGenerator{totalBomb, width}
 }
 
-func (bg *defaultBombGenerator) GenerateWithout(pos shared.Position) map[shared.Position]struct{} {
+func (bg *defaultBombGenerator) GenerateWithout(pos shared.Position) []shared.Position {
 	return shared.NewUniqueRandomPositionsWithout(bg.totalBomb, bg.width, pos)
 }
