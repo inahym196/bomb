@@ -76,20 +76,16 @@ type testBombGenerator struct{}
 
 var _ BombGenerator = testBombGenerator{}
 
-func (tbg testBombGenerator) GenerateWithout(pos shared.Position) map[shared.Position]struct{} {
-	poss := make(map[shared.Position]struct{}, 1)
-	poss[shared.NewPosition(0, 0)] = struct{}{}
-	return poss
+func (tbg testBombGenerator) GenerateWithout(pos shared.Position) []shared.Position {
+	return []shared.Position{shared.NewPosition(0, 0)}
 }
 
 type testBombGenerator2 struct{}
 
 var _ BombGenerator = testBombGenerator2{}
 
-func (tbg testBombGenerator2) GenerateWithout(pos shared.Position) map[shared.Position]struct{} {
-	poss := make(map[shared.Position]struct{}, 1)
-	poss[shared.NewPosition(1, 0)] = struct{}{}
-	return poss
+func (tbg testBombGenerator2) GenerateWithout(pos shared.Position) []shared.Position {
+	return []shared.Position{shared.NewPosition(1, 0)}
 }
 
 func TestBombField_WithBombGenerator(t *testing.T) {

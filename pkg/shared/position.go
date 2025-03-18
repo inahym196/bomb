@@ -2,6 +2,7 @@ package shared
 
 import (
 	"math/rand"
+	"slices"
 )
 
 type Position struct {
@@ -21,16 +22,18 @@ func NewRandomPosition(maxN int) Position {
 	return Position{rand.Intn(maxN), rand.Intn(maxN)}
 }
 
-func NewUniqueRandomPositionsWithout(n, maxN int, except Position) map[Position]struct{} {
-	poss := map[Position]struct{}{}
-	poss[except] = struct{}{}
-	for len(poss) != n+1 {
+func NewUniqueRandomPositionsWithout(n, maxN int, except Position) []Position {
+	poss := make([]Position, n+1)
+	poss[0] = except
+	cnt := 1
+	for len(poss) < n+1 {
 		pos := NewRandomPosition(maxN)
-		if _, ok := poss[pos]; !ok {
-			poss[pos] = struct{}{}
+		if !slices.Contains(poss, pos) {
+			poss[cnt] = pos
+			cnt++
 		}
 	}
-	delete(poss, except)
+	poss = poss[1:]
 	return poss
 }
 

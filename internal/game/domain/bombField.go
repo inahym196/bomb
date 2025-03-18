@@ -55,8 +55,8 @@ func (bf *BombField) OpenCell(pos shared.Position) (err error) {
 	return nil
 }
 
-func (bf *BombField) setBombs(positions map[shared.Position]struct{}) error {
-	for pos := range positions {
+func (bf *BombField) setBombs(positions []shared.Position) error {
+	for _, pos := range positions {
 		if !bf.board.contains(pos) {
 			return fmt.Errorf("ボード外のポジションは指定できません")
 		}
