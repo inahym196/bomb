@@ -102,28 +102,28 @@ func (c *CLIController) Run() {
 			}
 			fmt.Printf("gameState: %s\n", stateToStr(result.State))
 			fmt.Println(c.parseGame(result.GameDTO))
-		case "check":
-			row, col, err := c.parseCheckArgs(words)
+		case "flag":
+			row, col, err := c.parseFlagArgs(words)
 			if err != nil {
 				fmt.Println(err.Error())
 				continue
 			}
-			param := interactor.CheckCellParam{Pos: shared.NewPosition(col, row)}
-			result, err := c.gi.CheckCell(param)
+			param := interactor.FlagCellParam{Pos: shared.NewPosition(col, row)}
+			result, err := c.gi.FlagCell(param)
 			if err != nil {
 				fmt.Println(err.Error())
 				continue
 			}
 			fmt.Printf("gameState: %s\n", stateToStr(result.State))
 			fmt.Println(c.parseGame(result.GameDTO))
-		case "uncheck":
-			row, col, err := c.parseUnCheckArgs(words)
+		case "unflag":
+			row, col, err := c.parseUnFlagArgs(words)
 			if err != nil {
 				fmt.Println(err.Error())
 				continue
 			}
-			param := interactor.UnCheckCellParam{Pos: shared.NewPosition(col, row)}
-			result, err := c.gi.UnCheckCell(param)
+			param := interactor.UnFlagCellParam{Pos: shared.NewPosition(col, row)}
+			result, err := c.gi.UnFlagCell(param)
 			if err != nil {
 				fmt.Println(err.Error())
 				continue
@@ -140,7 +140,7 @@ func (c *CLIController) Run() {
 			  > start custom <width> <totalBomb>    Start Game, Set Custom width and totalBomb
 			  > show                                Show board
 			  > open <row: int> <col: alpha>        Open cell
-			  > check/uncheck <row> <col>           Check/UnCheck cell
+			  > flag/unflag <row> <col>             Flag/UnFlag cell
 			  > help                                Show this help message
 			  > exit                                Exit the program
 			`))
