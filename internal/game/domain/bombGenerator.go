@@ -1,6 +1,8 @@
 package domain
 
-import "github.com/inahym196/bomb/pkg/shared"
+import (
+	"github.com/inahym196/bomb/pkg/shared"
+)
 
 type BombGenerator interface {
 	GenerateWithout(pos shared.Position) []shared.Position
