@@ -93,46 +93,46 @@ func (gi *GameInteractor) OpenCell(param OpenCellParam) (OpenCellResult, error) 
 	return OpenCellResult{toGameDTO(game)}, nil
 }
 
-type CheckCellParam struct {
+type FlagCellParam struct {
 	Pos shared.Position
 }
 
-type CheckCellResult struct {
+type FlagCellResult struct {
 	GameDTO
 }
 
-func (gi *GameInteractor) CheckCell(param CheckCellParam) (CheckCellResult, error) {
+func (gi *GameInteractor) FlagCell(param FlagCellParam) (FlagCellResult, error) {
 	game, ok := gi.game_repo.Find()
 	if !ok {
-		return CheckCellResult{}, fmt.Errorf("ゲームが初期化されていません")
+		return FlagCellResult{}, fmt.Errorf("ゲームが初期化されていません")
 	}
 	if err := game.Flag(param.Pos); err != nil {
-		return CheckCellResult{}, err
+		return FlagCellResult{}, err
 	}
 	if err := gi.game_repo.Save(game); err != nil {
-		return CheckCellResult{}, err
+		return FlagCellResult{}, err
 	}
-	return CheckCellResult{toGameDTO(game)}, nil
+	return FlagCellResult{toGameDTO(game)}, nil
 }
 
-type UnCheckCellParam struct {
+type UnFlagCellParam struct {
 	Pos shared.Position
 }
 
-type UnCheckCellResult struct {
+type UnFlagCellResult struct {
 	GameDTO
 }
 
-func (gi *GameInteractor) UnCheckCell(param UnCheckCellParam) (UnCheckCellResult, error) {
+func (gi *GameInteractor) UnFlagCell(param UnFlagCellParam) (UnFlagCellResult, error) {
 	game, ok := gi.game_repo.Find()
 	if !ok {
-		return UnCheckCellResult{}, fmt.Errorf("ゲームが初期化されていません")
+		return UnFlagCellResult{}, fmt.Errorf("ゲームが初期化されていません")
 	}
 	if err := game.UnFlag(param.Pos); err != nil {
-		return UnCheckCellResult{}, err
+		return UnFlagCellResult{}, err
 	}
 	if err := gi.game_repo.Save(game); err != nil {
-		return UnCheckCellResult{}, err
+		return UnFlagCellResult{}, err
 	}
-	return UnCheckCellResult{toGameDTO(game)}, nil
+	return UnFlagCellResult{toGameDTO(game)}, nil
 }
