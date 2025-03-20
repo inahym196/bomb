@@ -16,15 +16,15 @@ func (o OpenCell) GetShadyPositions() []shared.Position {
 }
 func (o OpenCell) GetBombCount() int { return o.bombCount }
 
-func NewSolverCells(cells [][]interactor.CellDTO, bombCounts [][]int) map[shared.Position]OpenCell {
+func NewSolverCells(cells [][]interactor.CellDTO) map[shared.Position]OpenCell {
 	openCells := make(map[shared.Position]OpenCell)
 	for i := range cells {
 		for j, cell := range cells[i] {
-			if cell.IsOpened && bombCounts[i][j] != 0 {
+			if cell.IsOpened && cell.BombCount != 0 {
 				pos := shared.NewPosition(j, i)
 				openCells[pos] = OpenCell{
 					shadyPositions: findShadyPositionsFrom(cells, pos),
-					bombCount:      bombCounts[pos.Y][pos.X],
+					bombCount:      cell.BombCount,
 				}
 			}
 		}

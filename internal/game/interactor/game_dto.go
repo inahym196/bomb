@@ -8,38 +8,38 @@ type CellDTO struct {
 	IsOpened  bool
 	IsBomb    bool
 	IsFlagged bool
+	BombCount int
 }
 
 type GameDTO struct {
 	BoardCells [][]CellDTO
 	State      byte
-	BombCounts [][]int
 }
 
 func toGameDTO(game *domain.Game) GameDTO {
 	bombField := game.GetBombField()
 	return GameDTO{
-		BoardCells: cellsFrom(bombField.GetCells()),
+		BoardCells: cellsFrom(bombField.GetCells(), bombField.GetBombCounts()),
 		State:      game.GetState(),
-		BombCounts: bombField.GetBombCounts(),
 	}
 }
 
-func cellsFrom(cells [][]domain.Cell) [][]CellDTO {
+func cellsFrom(cells [][]domain.Cell, bombCounts [][]int) [][]CellDTO {
 	dto := make([][]CellDTO, len(cells))
 	for i, row := range cells {
 		dto[i] = make([]CellDTO, len(row))
 		for j, cell := range row {
-			dto[i][j] = cellFrom(cell)
+			dto[i][j] = cellFrom(cell, bombCounts[i][j])
 		}
 	}
 	return dto
 }
 
-func cellFrom(cell domain.Cell) CellDTO {
+func cellFrom(cell domain.Cell, bombCount int) CellDTO {
 	return CellDTO{
 		IsOpened:  cell.IsOpened(),
 		IsBomb:    cell.IsBomb(),
 		IsFlagged: cell.IsFlagged(),
+		BombCount: bombCount,
 	}
 }
