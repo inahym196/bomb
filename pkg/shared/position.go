@@ -53,13 +53,3 @@ func (p Position) ForEachNeighbor(fn func(pos Position)) {
 func (p Position) offset(dx, dy int) Position {
 	return Position{p.X + dx, p.Y + dy}
 }
-
-func (p Position) ForEachNeighborSatisfy(fn func(pos Position) (ok bool)) bool {
-	for _, dir := range neighbors {
-		neighbor := p.offset(dir.dx, dir.dy)
-		if !fn(neighbor) {
-			return false
-		}
-	}
-	return true
-}
