@@ -19,9 +19,7 @@ func (o OpenCell) GetShadyCellKeys() []shared.Position {
 }
 func (o OpenCell) GetBombCount() int { return o.bombCount }
 
-func NewSolverCells(game interactor.GameDTO) map[shared.Position]OpenCell {
-	cells := game.BoardCells
-	bombCounts := game.BombCounts
+func NewSolverCells(cells [][]interactor.CellDTO, bombCounts [][]int) map[shared.Position]OpenCell {
 	openCells := make(map[shared.Position]OpenCell)
 	for i := range cells {
 		for j, cell := range cells[i] {

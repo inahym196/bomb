@@ -86,7 +86,7 @@ func (c *CLIController) Run() {
 				fmt.Println(err.Error())
 				continue
 			}
-			param := si.GetHintParam{Game: result.GameDTO}
+			param := si.GetHintParam{Cells: result.BoardCells, BombCounts: result.BombCounts}
 			fmt.Println(c.si.GetHint(param))
 		case "open":
 			row, col, err := c.parseOpenArgs(words)
