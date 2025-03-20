@@ -1,2 +1,6 @@
 github.com/MakeNowJust/heredoc v1.0.0 h1:cXCdzVdstXyiTqTvfqk9SDHpKNjxuom+DOlyEeQ4pzQ=
 github.com/MakeNowJust/heredoc v1.0.0/go.mod h1:mG5amYoWBHf8vpLOuehzbGGw0EHxpZZ6lCpQ4fNJ8LE=
+github.com/aclements/go-moremath v0.0.0-20241023150245-c8bbc672ef66 h1:siNQlUMcFUDZWCOt0p+RHl7et5Nnwwyq/sFZmr4iG1I=
+github.com/aclements/go-moremath v0.0.0-20241023150245-c8bbc672ef66/go.mod h1:FDw7qicTbJ1y1SZcNnOvym2BogPdC3lY9Z1iUM4MVhw=
+golang.org/x/perf v0.0.0-20250305200902-02a15fd477ba h1:0iM7SkkyXtZKGBWfn+ka1Rj6VOCRyFMkEHaCWsaR7no=
+golang.org/x/perf v0.0.0-20250305200902-02a15fd477ba/go.mod h1:YEhzh+7vn0fUjydWEf27T4XWyeMDdRK44swFIgYh/nY=

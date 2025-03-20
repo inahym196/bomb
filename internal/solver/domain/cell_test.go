@@ -44,10 +44,10 @@ func TestNewSolverCells(t *testing.T) {
 	}
 	want := map[shared.Position]OpenCell{
 		shared.NewPosition(0, 1): {
-			map[shared.Position]struct{}{shared.NewPosition(0, 0): {}, shared.NewPosition(1, 0): {}}, 1,
+			[]shared.Position{shared.NewPosition(0, 0), shared.NewPosition(1, 0)}, 1,
 		},
 		shared.NewPosition(2, 1): {
-			map[shared.Position]struct{}{shared.NewPosition(1, 0): {}, shared.NewPosition(2, 0): {}}, 1,
+			[]shared.Position{shared.NewPosition(1, 0), shared.NewPosition(2, 0)}, 1,
 		},
 	}
 	if got := NewSolverCells(cells, bombCounts); !reflect.DeepEqual(got, want) {

@@ -1,21 +1,18 @@
 package domain
 
 import (
-	"maps"
-	"slices"
-
 	"github.com/inahym196/bomb/internal/game/interactor"
 	"github.com/inahym196/bomb/pkg/shared"
 )
 
 type OpenCell struct {
-	shadyCells map[shared.Position]struct{}
-	bombCount  int
+	shadyPositions []shared.Position
+	bombCount      int
 	//isSolved  bool
 }
 
-func (o OpenCell) GetShadyCellKeys() []shared.Position {
-	return slices.Collect(maps.Keys(o.shadyCells))
+func (o OpenCell) GetShadyPositions() []shared.Position {
+	return o.shadyPositions
 }
 func (o OpenCell) GetBombCount() int { return o.bombCount }
 
@@ -26,8 +23,8 @@ func NewSolverCells(cells [][]interactor.CellDTO, bombCounts [][]int) map[shared
 			if cell.IsOpened && bombCounts[i][j] != 0 {
 				pos := shared.NewPosition(j, i)
 				openCells[pos] = OpenCell{
-					shadyCells: findShadyCellsFrom(cells, pos),
-					bombCount:  bombCounts[pos.Y][pos.X],
+					shadyPositions: findShadyPositionsFrom(cells, pos),
+					bombCount:      bombCounts[pos.Y][pos.X],
 				}
 			}
 		}
@@ -35,18 +32,18 @@ func NewSolverCells(cells [][]interactor.CellDTO, bombCounts [][]int) map[shared
 	return openCells
 }
 
-func findShadyCellsFrom(cells [][]interactor.CellDTO, pos shared.Position) map[shared.Position]struct{} {
-	shadyCells := make(map[shared.Position]struct{})
+func findShadyPositionsFrom(cells [][]interactor.CellDTO, pos shared.Position) []shared.Position {
+	shadyPositions := make([]shared.Position, 0, 8)
 	pos.ForEachNeighbor(func(pos shared.Position) {
 		if !isInCells(cells, pos) {
 			return
 		}
 		cell := cells[pos.Y][pos.X]
 		if !cell.IsOpened && !cell.IsFlagged {
-			shadyCells[pos] = struct{}{}
+			shadyPositions = append(shadyPositions, pos)
 		}
 	})
-	return shadyCells
+	return shadyPositions
 }
 
 // そもそもSolved以外(BombCount!=0)のCellを集めているので全てのOpenCellがマッチするのでは？
@@ -60,7 +57,6 @@ func findShadyCellsFrom(cells [][]interactor.CellDTO, pos shared.Position) map[s
 //			})
 //		}
 func isInCells(cells [][]interactor.CellDTO, pos shared.Position) bool {
-	min := 0
 	max := len(cells)
-	return min <= pos.X && pos.X < max && min <= pos.Y && pos.Y < max
+	return pos.IsInside(max, max)
 }
