@@ -68,7 +68,7 @@ func (t theorem1) GetDescription() string {
 func (t theorem1) Apply(cells map[shared.Position]OpenCell) Solution {
 	poss := make([]shared.Position, 0, len(cells)/2)
 	for _, opencell := range cells {
-		shadyCells := opencell.GetShadyCellKeys()
+		shadyCells := opencell.GetShadyPositions()
 		if len(shadyCells) <= opencell.GetBombCount() {
 			poss = append(poss, shadyCells...)
 		}
