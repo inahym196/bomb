@@ -151,7 +151,8 @@ func (c *CLIController) Run() {
 }
 
 func (c *CLIController) parseGame(game interactor.GameDTO) (output string) {
-	for j := range len(game.BoardCells) + 1 {
+	output += "  "
+	for j := range len(game.BoardCells) {
 		output += fmt.Sprintf("%2s", shared.NumToExcelColumn(j))
 	}
 	output += "\n"
@@ -179,7 +180,8 @@ func cellToStr(cell interactor.CellDTO) string {
 	return fmt.Sprint(cell.BombCount)
 }
 func (c *CLIController) debugGame(game interactor.GameDTO) (output string) {
-	for j := range len(game.BoardCells) + 1 {
+	output += "  "
+	for j := range len(game.BoardCells) {
 		output += fmt.Sprintf("%2s", shared.NumToExcelColumn(j))
 	}
 	output += "\n"
