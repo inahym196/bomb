@@ -3,15 +3,16 @@ package domain
 import (
 	"fmt"
 
+	"github.com/inahym196/bomb/internal/game/interactor"
 	"github.com/inahym196/bomb/pkg/shared"
 )
 
 type solver struct {
-	cells    map[shared.Position]OpenCell
+	cells    [][]interactor.CellDTO
 	theorems []Theorem
 }
 
-func NewSolver(cells map[shared.Position]OpenCell) solver {
+func NewSolver(cells [][]interactor.CellDTO) solver {
 	return solver{
 		cells: cells,
 		theorems: []Theorem{
@@ -37,41 +38,9 @@ func (s solver) Solve() string {
 		}
 		str += fmt.Sprintf("[%s]に従い、\n以下は全て%s\n", theorem.GetDescription(), result)
 		for _, pos := range solution.Positions {
-			str += fmt.Sprintf("%v\n", pos)
+			str += fmt.Sprintf("(%d,%s)\n", pos.Y, shared.NumToExcelColumn(pos.X))
 		}
-		str += fmt.Sprint()
+		str += "\n"
 	}
 	return str
-}
-
-const (
-	SolutionResultIsNotBomb byte = iota
-	SolutionResultIsBomb    byte = iota
-)
-
-type Solution struct {
-	Positions []shared.Position
-	Result    byte
-}
-
-type Theorem interface {
-	GetDescription() string
-	Apply(map[shared.Position]OpenCell) Solution
-}
-
-type theorem1 struct{}
-
-func (t theorem1) GetDescription() string {
-	return "shadyCellsがtotalBomb以下なら全部bomb"
-}
-
-func (t theorem1) Apply(cells map[shared.Position]OpenCell) Solution {
-	poss := make([]shared.Position, 0, len(cells)/2)
-	for _, opencell := range cells {
-		shadyCells := opencell.GetShadyPositions()
-		if len(shadyCells) <= opencell.GetBombCount() {
-			poss = append(poss, shadyCells...)
-		}
-	}
-	return Solution{Result: SolutionResultIsBomb, Positions: poss}
 }
