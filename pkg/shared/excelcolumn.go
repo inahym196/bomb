@@ -8,6 +8,7 @@ import (
 
 func NumToExcelColumn(n int) string {
 	result := ""
+	n++
 	for n > 0 {
 		n--
 		result = string(rune('A'+(n%26))) + result
