@@ -6,8 +6,8 @@ import (
 )
 
 const (
-	SolutionResultIsNotBomb byte = iota
-	SolutionResultIsBomb    byte = iota
+	SolutionResultIsSafe byte = iota
+	SolutionResultIsBomb byte = iota
 )
 
 type Solution struct {
@@ -30,6 +30,9 @@ func (t theorem1) Apply(cells [][]interactor.CellDTO) Solution {
 	poss := make([]shared.Position, 0, len(cells)*len(cells))
 	for i := range cells {
 		for j := range cells[i] {
+			if !cells[i][j].IsOpened {
+				continue
+			}
 			closedPositions := make([]shared.Position, 0, 8)
 			shared.NewPosition(j, i).ForEachNeighbor(func(pos shared.Position) {
 				if !pos.IsInside(len(cells), len(cells)) || cells[pos.Y][pos.X].IsOpened {
@@ -44,4 +47,37 @@ func (t theorem1) Apply(cells [][]interactor.CellDTO) Solution {
 		}
 	}
 	return Solution{Result: SolutionResultIsBomb, Positions: poss}
+}
+
+type theorem2 struct{}
+
+func (t theorem2) GetDescription() string {
+	return "周囲のflaggedCellの合計数とbombCountが等しいなら残りのclosedCellは安全"
+}
+
+func (t theorem2) Apply(cells [][]interactor.CellDTO) Solution {
+	poss := make([]shared.Position, 0, len(cells)*len(cells))
+	for i := range cells {
+		for j := range cells[i] {
+			if !cells[i][j].IsOpened {
+				continue
+			}
+			unflaggedPositions := make([]shared.Position, 0, 8)
+			flaggedCount := 0
+			shared.NewPosition(j, i).ForEachNeighbor(func(pos shared.Position) {
+				if !pos.IsInside(len(cells), len(cells)) || cells[pos.Y][pos.X].IsOpened {
+					return
+				}
+				if cells[pos.Y][pos.X].IsFlagged {
+					flaggedCount++
+					return
+				}
+				unflaggedPositions = append(unflaggedPositions, pos)
+			})
+			if flaggedCount == cells[i][j].BombCount {
+				poss = append(poss, unflaggedPositions...)
+			}
+		}
+	}
+	return Solution{Result: SolutionResultIsSafe, Positions: poss}
 }
