@@ -22,7 +22,7 @@ Available Commands:
   > start custom <width> <totalBomb>    Start Game, Set Custom width and totalBomb
   > show                                Show board
   > open <row: int> <col: alpha>        Open cell
-  > check/uncheck <row> <col>           Check/UnCheck cell
+  > flag/unflag <row> <col>             Flag/UnFlag cell
   > help                                Show this help message
   > exit                                Exit the program
 
@@ -52,7 +52,7 @@ gameState: Playing
  7 □ □ □ □ 2 1 2 □ □
  8 □ □ □ □ □ □ □ □ □
 
-Enter command> check 2 A
+Enter command> flag 2 A
 gameState: Playing
    A B C D E F G H I
  0 0 0 0 0 0 1 □ 1 0

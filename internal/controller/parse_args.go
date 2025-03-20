@@ -68,7 +68,7 @@ func (c *CLIController) parseOpenArgs(words []string) (row, col int, err error) 
 	return row, col, nil
 }
 
-func (c *CLIController) parseCheckArgs(words []string) (row, col int, err error) {
+func (c *CLIController) parseFlagArgs(words []string) (row, col int, err error) {
 	if len(words) != 3 {
 		return 0, 0, fmt.Errorf("引数の数が不正です. \"help\"コマンドを確認してください")
 	}
@@ -83,7 +83,7 @@ func (c *CLIController) parseCheckArgs(words []string) (row, col int, err error)
 	return row, col, nil
 }
 
-func (c *CLIController) parseUnCheckArgs(words []string) (row, col int, err error) {
+func (c *CLIController) parseUnFlagArgs(words []string) (row, col int, err error) {
 	if len(words) != 3 {
 		return 0, 0, fmt.Errorf("引数の数が不正です. \"help\"コマンドを確認してください")
 	}
