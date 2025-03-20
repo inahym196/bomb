@@ -16,6 +16,5 @@ type GetHintParam struct {
 }
 
 func (si *GameSolverInteractor) GetHint(param GetHintParam) string {
-	cells := domain.NewSolverCells(param.Cells)
-	return domain.NewSolver(cells).Solve()
+	return domain.NewSolver(param.Cells).Solve()
 }
