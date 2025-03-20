@@ -25,9 +25,14 @@ func BenchmarkNewSolverCells(b *testing.B) {
 		{1, 1, 1},
 		{0, 0, 0},
 	}
+	for i := range cells {
+		for j := range cells[i] {
+			cells[i][j].BombCount = bombCounts[i][j]
+		}
+	}
 	b.ResetTimer()
 	for range b.N {
-		NewSolverCells(cells, bombCounts)
+		NewSolverCells(cells)
 	}
 }
 
@@ -42,6 +47,11 @@ func TestNewSolverCells(t *testing.T) {
 		{1, 1, 1},
 		{0, 0, 0},
 	}
+	for i := range cells {
+		for j := range cells[i] {
+			cells[i][j].BombCount = bombCounts[i][j]
+		}
+	}
 	want := map[shared.Position]OpenCell{
 		shared.NewPosition(0, 1): {
 			[]shared.Position{shared.NewPosition(0, 0)}, 1,
@@ -53,7 +63,7 @@ func TestNewSolverCells(t *testing.T) {
 			[]shared.Position{shared.NewPosition(2, 0)}, 1,
 		},
 	}
-	if got := NewSolverCells(cells, bombCounts); !reflect.DeepEqual(got, want) {
+	if got := NewSolverCells(cells); !reflect.DeepEqual(got, want) {
 		t.Errorf("NewSolverCells() = %v, want %v", got, want)
 	}
 }

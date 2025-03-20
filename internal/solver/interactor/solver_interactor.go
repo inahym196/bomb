@@ -12,11 +12,10 @@ func NewGameSolverInteractor() *GameSolverInteractor {
 }
 
 type GetHintParam struct {
-	Cells      [][]interactor.CellDTO
-	BombCounts [][]int
+	Cells [][]interactor.CellDTO
 }
 
 func (si *GameSolverInteractor) GetHint(param GetHintParam) string {
-	cells := domain.NewSolverCells(param.Cells, param.BombCounts)
+	cells := domain.NewSolverCells(param.Cells)
 	return domain.NewSolver(cells).Solve()
 }
