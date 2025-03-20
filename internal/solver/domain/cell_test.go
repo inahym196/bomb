@@ -16,8 +16,8 @@ var (
 
 func BenchmarkNewSolverCells(b *testing.B) {
 	cells := [][]interactor.CellDTO{
-		{closed, closed, closed},
-		{opened, flagged, opened},
+		{closed, flagged, closed},
+		{opened, opened, opened},
 		{opened, opened, opened},
 	}
 	bombCounts := [][]int{
@@ -33,8 +33,8 @@ func BenchmarkNewSolverCells(b *testing.B) {
 
 func TestNewSolverCells(t *testing.T) {
 	cells := [][]interactor.CellDTO{
-		{closed, closed, closed},
-		{opened, flagged, opened},
+		{closed, flagged, closed},
+		{opened, opened, opened},
 		{opened, opened, opened},
 	}
 	bombCounts := [][]int{
@@ -44,10 +44,13 @@ func TestNewSolverCells(t *testing.T) {
 	}
 	want := map[shared.Position]OpenCell{
 		shared.NewPosition(0, 1): {
-			[]shared.Position{shared.NewPosition(0, 0), shared.NewPosition(1, 0)}, 1,
+			[]shared.Position{shared.NewPosition(0, 0)}, 1,
+		},
+		shared.NewPosition(1, 1): {
+			[]shared.Position{shared.NewPosition(0, 0), shared.NewPosition(2, 0)}, 1,
 		},
 		shared.NewPosition(2, 1): {
-			[]shared.Position{shared.NewPosition(1, 0), shared.NewPosition(2, 0)}, 1,
+			[]shared.Position{shared.NewPosition(2, 0)}, 1,
 		},
 	}
 	if got := NewSolverCells(cells, bombCounts); !reflect.DeepEqual(got, want) {
