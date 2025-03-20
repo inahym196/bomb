@@ -26,7 +26,7 @@ func NewUniqueRandomPositionsWithout(n, maxN int, except Position) []Position {
 	poss := make([]Position, n+1)
 	poss[0] = except
 	cnt := 1
-	for len(poss) < n+1 {
+	for cnt < n+1 {
 		pos := NewRandomPosition(maxN)
 		if !slices.Contains(poss, pos) {
 			poss[cnt] = pos
