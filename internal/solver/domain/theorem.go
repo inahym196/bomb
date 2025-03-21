@@ -40,8 +40,7 @@ func (t theorem1) Apply(cells [][]interactor.CellDTO) Solution {
 				}
 				closedPositions = append(closedPositions, pos)
 			})
-			cell := cells[i][j]
-			if len(closedPositions) <= cell.BombCount {
+			if len(closedPositions) <= cells[i][j].BombCount {
 				poss = append(poss, closedPositions...)
 			}
 		}

@@ -30,16 +30,19 @@ func (s solver) Solve() string {
 			str += fmt.Sprintf("[%s]: 該当なし\n", theorem.GetDescription())
 			continue
 		}
-		var result string
 		switch solution.Result {
 		case SolutionResultIsBomb:
-			result = "Bomb"
+			str += fmt.Sprintf("[%s]に従い、\n以下は全てBombである\n", theorem.GetDescription())
+			for _, pos := range solution.Positions {
+				if !s.cells[pos.Y][pos.X].IsFlagged {
+					str += fmt.Sprintf("(%d,%s)\n", pos.Y, shared.NumToExcelColumn(pos.X))
+				}
+			}
 		case SolutionResultIsSafe:
-			result = "安全"
-		}
-		str += fmt.Sprintf("[%s]に従い、\n以下は全て%sである\n", theorem.GetDescription(), result)
-		for _, pos := range solution.Positions {
-			str += fmt.Sprintf("(%d,%s)\n", pos.Y, shared.NumToExcelColumn(pos.X))
+			str += fmt.Sprintf("[%s]に従い、\n以下は全て安全である\n", theorem.GetDescription())
+			for _, pos := range solution.Positions {
+				str += fmt.Sprintf("(%d,%s)\n", pos.Y, shared.NumToExcelColumn(pos.X))
+			}
 		}
 		str += "\n"
 	}
