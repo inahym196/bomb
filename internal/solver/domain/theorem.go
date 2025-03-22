@@ -34,12 +34,12 @@ func (t theorem1) Apply(cells [][]interactor.CellDTO) Solution {
 				continue
 			}
 			closedPositions := make([]shared.Position, 0, 8)
-			shared.NewPosition(j, i).ForEachNeighbor(func(pos shared.Position) {
+			for _, pos := range shared.NewPosition(j, i).Neighbors() {
 				if !pos.IsInside(len(cells), len(cells)) || cells[pos.Y][pos.X].IsOpened {
-					return
+					continue
 				}
 				closedPositions = append(closedPositions, pos)
-			})
+			}
 			if len(closedPositions) <= cells[i][j].BombCount {
 				poss = append(poss, closedPositions...)
 			}
@@ -63,16 +63,16 @@ func (t theorem2) Apply(cells [][]interactor.CellDTO) Solution {
 			}
 			unflaggedPositions := make([]shared.Position, 0, 8)
 			flaggedCount := 0
-			shared.NewPosition(j, i).ForEachNeighbor(func(pos shared.Position) {
+			for _, pos := range shared.NewPosition(j, i).Neighbors() {
 				if !pos.IsInside(len(cells), len(cells)) || cells[pos.Y][pos.X].IsOpened {
-					return
+					continue
 				}
 				if cells[pos.Y][pos.X].IsFlagged {
 					flaggedCount++
-					return
+					continue
 				}
 				unflaggedPositions = append(unflaggedPositions, pos)
-			})
+			}
 			if flaggedCount == cells[i][j].BombCount {
 				poss = append(poss, unflaggedPositions...)
 			}

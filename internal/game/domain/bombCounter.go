@@ -38,11 +38,11 @@ func (bc *bombCounter) SetBombCount(pos shared.Position) {
 }
 
 func (bc *bombCounter) incrementBombCountForEachNeighbor(pos shared.Position) {
-	pos.ForEachNeighbor(func(p shared.Position) {
+	for _, p := range pos.Neighbors() {
 		if bc.contains(p) && bc.counts[p.Y][p.X] != -1 {
 			bc.counts[p.Y][p.X]++
 		}
-	})
+	}
 }
 
 func (bc *bombCounter) IsNeighborsSafe(pos shared.Position) bool {
