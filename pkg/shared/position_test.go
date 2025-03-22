@@ -42,3 +42,13 @@ func TestNewUniqueRandomPositionsWithout(t *testing.T) {
 		})
 	}
 }
+
+func BenchmarkPosition_Neighbors(b *testing.B) {
+	pos := NewPosition(0, 0)
+	b.ResetTimer()
+	for range b.N {
+		for _, nb := range pos.Neighbors() {
+			nb.X++
+		}
+	}
+}
