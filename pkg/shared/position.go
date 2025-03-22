@@ -54,3 +54,14 @@ func (p Position) Neighbors() []Position {
 	}
 	return nbs
 }
+
+func (p Position) InsideNeighbors(maxX, maxY int) []Position {
+	nbs := make([]Position, 0, 8)
+	for _, nb := range neighbors {
+		nb := p.offset(nb.dx, nb.dy)
+		if nb.IsInside(maxX, maxY) {
+			nbs = append(nbs, nb)
+		}
+	}
+	return nbs
+}
