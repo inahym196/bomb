@@ -1,6 +1,7 @@
 package shared
 
 import (
+	"reflect"
 	"slices"
 	"testing"
 )
@@ -50,5 +51,17 @@ func BenchmarkPosition_Neighbors(b *testing.B) {
 		for _, nb := range pos.Neighbors() {
 			nb.X++
 		}
+	}
+}
+
+func TestPosition_Neighbors(t *testing.T) {
+	got := NewPosition(0, 0).Neighbors()
+	want := []Position{
+		{-1, -1}, {0, -1}, {1, -1},
+		{-1, 0} /*   */, {1, 0},
+		{-1, 1}, {0, 1}, {1, 1},
+	}
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("want %v, got %v", want, got)
 	}
 }
