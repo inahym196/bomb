@@ -38,9 +38,9 @@ func NewUniqueRandomPositionsWithout(n, maxN int, except Position) []Position {
 }
 
 var neighbors = []struct{ dx, dy int }{
-	{-1, -1}, {-1, 0}, {-1, 1},
-	{0, -1}, {0, 1},
-	{1, -1}, {1, 0}, {1, 1},
+	{-1, -1}, {0, -1}, {1, -1},
+	{-1, 0} /*   */, {1, 0},
+	{-1, 1}, {0, 1}, {1, 1},
 }
 
 func (p Position) offset(dx, dy int) Position {
@@ -48,9 +48,9 @@ func (p Position) offset(dx, dy int) Position {
 }
 
 func (p Position) Neighbors() []Position {
-	nps := make([]Position, 8)
+	nbs := make([]Position, 8)
 	for i, nb := range neighbors {
-		nps[i] = p.offset(nb.dx, nb.dy)
+		nbs[i] = p.offset(nb.dx, nb.dy)
 	}
-	return nps
+	return nbs
 }
