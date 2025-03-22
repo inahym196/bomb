@@ -100,12 +100,12 @@ func (bf *BombField) expandSafeArea(pos shared.Position) {
 		visited[pos.Y][pos.X] = true
 		_ = bf.openCell(pos)
 		if bf.bombCounter.IsNeighborsSafe(pos) {
-			pos.ForEachNeighbor(func(p shared.Position) {
+			for _, p := range pos.Neighbors() {
 				cell, err := bf.board.GetCellAt(p)
 				if err == nil && !visited[p.Y][p.X] && cell.CanOpen() {
 					queue.PushBack(p)
 				}
-			})
+			}
 		}
 	}
 }
