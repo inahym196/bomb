@@ -65,3 +65,21 @@ func TestPosition_Neighbors(t *testing.T) {
 		t.Errorf("want %v, got %v", want, got)
 	}
 }
+
+func BenchmarkPosition_InsideNeighbors(b *testing.B) {
+	pos := NewPosition(0, 0)
+	b.ResetTimer()
+	for range b.N {
+		for _, nb := range pos.InsideNeighbors(8, 8) {
+			nb.X++
+		}
+	}
+}
+
+func TestPosition_InsideNeighbors(t *testing.T) {
+	got := NewPosition(0, 0).InsideNeighbors(2, 2)
+	want := []Position{{1, 0}, {0, 1}, {1, 1}}
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("want %v, got %v", want, got)
+	}
+}
