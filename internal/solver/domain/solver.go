@@ -18,6 +18,7 @@ func NewSolver(cells [][]interactor.CellDTO) solver {
 		theorems: []Theorem{
 			theorem1{},
 			theorem2{},
+			theorem3{},
 		},
 	}
 }
