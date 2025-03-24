@@ -1,6 +1,8 @@
 package domain
 
 import (
+	"slices"
+
 	"github.com/inahym196/bomb/internal/game/interactor"
 	"github.com/inahym196/bomb/pkg/shared"
 )
@@ -79,4 +81,53 @@ func (t theorem2) Apply(cells [][]interactor.CellDTO) Solution {
 		}
 	}
 	return Solution{Result: SolutionResultIsSafe, Positions: poss}
+}
+
+type theorem3 struct{}
+
+func (t theorem3) GetDescription() string {
+	return "1・2の定理"
+}
+
+func (t theorem3) Apply(cells [][]interactor.CellDTO) Solution {
+
+	poss := make([]shared.Position, 0, len(cells)*len(cells))
+	for i := range cells {
+		for j := range cells[i] {
+			cell := cells[i][j]
+			if !cell.IsOpened || cell.BombCount != 1 {
+				continue
+			}
+			nbs := shared.NewPosition(j, i).Neighbors()
+			for _, nb := range nbs {
+				if !nb.IsInside(len(cells), len(cells)) || !cells[nb.Y][nb.X].IsOpened {
+					continue
+				}
+				bc := cells[nb.Y][nb.X].BombCount
+				if bc <= 1 {
+					continue
+				}
+				closedDiff := make([]shared.Position, 0, 8)
+				for _, diff := range t.diff(nb.Neighbors(), nbs) {
+					if !cells[diff.Y][diff.X].IsOpened {
+						closedDiff = append(closedDiff, diff)
+					}
+				}
+				if len(closedDiff)+1 == bc {
+					poss = append(poss, closedDiff...)
+				}
+			}
+		}
+	}
+	return Solution{Result: SolutionResultIsBomb, Positions: poss}
+}
+
+func (t theorem3) diff(slice1, slice2 []shared.Position) []shared.Position {
+	diff := make([]shared.Position, 0, 8)
+	for _, v := range slice1 {
+		if !slices.Contains(slice2, v) {
+			diff = append(diff, v)
+		}
+	}
+	return diff
 }
